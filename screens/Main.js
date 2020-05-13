@@ -1,11 +1,12 @@
 import React from 'react'
 import { SafeAreaView, StyleSheet, View, Image } from 'react-native'
 import Colors from '../styles/Colors'
+import Header from './components/Header'
 
 export default function Main() {
     return (
         <SafeAreaView style={styles.body}>
-            <Image style={{height: '45%', width: 350}} source={require('../assets/logo/pickyeats.png')} />
+          <Header />
         </SafeAreaView>
     )
 }

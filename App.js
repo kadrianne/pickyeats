@@ -1,19 +1,17 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
+import React from 'react'
+import { createStore } from 'redux'
+import { Provider } from 'react-redux'
+import reducers from './reducers'
+import { SafeAreaView, StyleSheet, View, Text, Image } from 'react-native'
+import Colors from './styles/Colors'
+import { Button } from 'react-native-elements'
 
-import React from 'react';
-import { SafeAreaView, StyleSheet, View, Text, Image } from 'react-native';
-import Colors from './styles/Colors';
-import { Button } from 'react-native-elements';
+const store = createStore(reducers)
 
 function App() {
   return (
     <>
+    <Provider store={store}>
       <SafeAreaView style={styles.body}>
         <Image style={{height: '45%', width: 350}} source={require('./assets/logo/pickyeats.png')} />
         <View style={styles.container}>
@@ -21,9 +19,10 @@ function App() {
           <Button buttonStyle={styles.button} titleStyle={styles.buttonText} type="clear" title="SIGN UP" />
         </View>
       </SafeAreaView>
+    </Provider>
     </>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   body: {
@@ -45,4 +44,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default App;
+export default App

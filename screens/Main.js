@@ -7,7 +7,6 @@ export default function Main() {
     return (
         <SafeAreaView style={styles.body}>
           <Header />
-            {/* <Image style={{height: '45%', width: 350}} source={require('../assets/logo/pickyeats.png')} /> */}
         </SafeAreaView>
     )
 }

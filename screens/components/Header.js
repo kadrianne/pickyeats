@@ -9,7 +9,6 @@ export default function Header() {
         <View style={styles.nav}>
             <Image style={{height: 35, width: 35}} source={require('../../assets/logo/pickyeats-icon.png')} />
             <Icon name='user-circle' size={30} color="#990000" />
-            {/* <Image style={{height: '45%', width: 350}} source={require('../assets/logo/pickyeats.png')} /> */}
         </View>
     )
 }
@@ -24,16 +23,5 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       justifyContent: 'space-between',
       backgroundColor: Colors.orange,
-    },
-    // button: {
-    //   margin: 10,
-    // },
-    // buttonText: {
-    //   color: Colors.white,
-    //   fontSize: 30,
-    //   fontFamily: 'Pompiere-Regular'
-    // },
-    // container: {
-    //   flexDirection: 'row'
-    // }
+    }
   })

@@ -1,15 +1,19 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import Home from './screens/Home'
-
+import Main from './screens/Main'
 
 export default function AppMain() {
   const screen = useSelector(state => state.navigation)
-  console.log(screen)
+
+  const display = {
+      'home': <Home />,
+      'main': <Main />
+  }
 
   return (
     <>
-        {screen === 'home' ? <Home /> : null}
+        {display[screen]}
     </>
   )
 }

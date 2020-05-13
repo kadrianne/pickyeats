@@ -1,22 +1,18 @@
 import React from 'react'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
-import { SafeAreaView } from 'react-native'
 import reducers from './reducers'
-import Home from './screens/Home'
+import AppMain from './AppMain'
 
 const store = createStore(reducers)
 
-function App() {
+export default function App() {
+
   return (
     <>
     <Provider store={store}>
-      <SafeAreaView style={styles.body}>
-        <Home />
-      </SafeAreaView>
+        <AppMain />
     </Provider>
     </>
   )
 }
-
-export default App

@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     card: {
         backgroundColor: Colors.orange,
         margin: 15,
-        height: '75%',
+        height: 600,
         borderRadius: 5,
         justifyContent: 'space-between',
         shadowColor: "#000",

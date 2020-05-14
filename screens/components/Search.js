@@ -13,7 +13,7 @@ export default function Search() {
     const dispatch = useDispatch()
     const [searchText, handleChange] = useFormField()
 
-    const getRestaurantList = (results) => {
+    const setRestaurantList = (results) => {
         dispatch({type:'SET_RESTAURANTS', restaurants: results['businesses']})
     }
 
@@ -28,15 +28,8 @@ export default function Search() {
                 'Authorization': `Bearer ${YELP_API_TOKEN}`
             }
         }).then(response => response.json())
-            .then(getRestaurantList)
-        // const searchInput = {
-        //     address: searchText,
-        //     key: GOOGLE_API_KEY
-        // }
+            .then(setRestaurantList)
 
-        // const searchURL = `https://maps.googleapis.com/maps/api/geocode/json?${query}`
-        
-        // geocode(searchURL)
     }
 
     return (

@@ -23,8 +23,6 @@ export default function RestaurantCard() {
                     <Icon name='dollar' size={20} color="#990000" />
                 </View>
             </View>
-            <View style={styles.price}>
-            </View>
             <View>
                 <Text style={styles.text}>2262 Larimer St,</Text>
                 <Text style={styles.text}>Denver, CO 80205, USA</Text>
@@ -39,8 +37,8 @@ export default function RestaurantCard() {
 const styles = StyleSheet.create({
     card: {
         backgroundColor: Colors.orange,
-        margin: 15,
-        height: 600,
+        margin: 10,
+        height: 550,
         borderRadius: 5,
         justifyContent: 'space-between',
         shadowColor: "#000",
@@ -51,17 +49,19 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.23,
         shadowRadius: 2.62,
         elevation: 4,
+        position: 'relative'
     },
     image: {
         width: '100%',
-        aspectRatio: 3/2,
+        aspectRatio: 5/3,
         borderRadius: 5,
         margin: 5,
     },
     title: {
         fontFamily: 'LondrinaShadow-Regular',
-        fontSize: 48,
+        fontSize: 44,
         textAlign: 'center',
+        marginHorizontal: 15
     },
     text: {
         fontFamily: 'Raleway-Light',
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     },
     infoView:{
         flexDirection: 'row',
-        margin: 15,
+        marginHorizontal: 15,
     },
     ratingView: {
         flexDirection: 'row',
@@ -97,13 +97,11 @@ const styles = StyleSheet.create({
     button: {
         borderColor: Colors.burgundy,
         borderWidth: 1,
-        // marginHorizontal: 15,
-        // marginVertical: 5,
         margin: 15
     },
     buttonText: {
         color: Colors.burgundy,
         fontSize: 24,
         fontFamily: 'Pompiere-Regular'
-    },
+    }
 })

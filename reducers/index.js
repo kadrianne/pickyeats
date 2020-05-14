@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux'
 import navigation from './NavigationReducer'
-import location from './LocationReducer'
+import restaurantList from './RestaurantListReducer'
 
-export default combineReducers({navigation,location})
+export default combineReducers({navigation,restaurantList})

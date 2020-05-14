@@ -5,5 +5,7 @@ export default {
     light: '#DAE1E7',
     dark: '#444',
     black: '#000',
-    orange: '#FFC55C'
+    orange: '#FFC55C',
+    darkOrange: '#F2A22C',
+    burgundy: '#990000'
   }

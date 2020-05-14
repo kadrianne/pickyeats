@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
       margin: 10,
     },
     buttonText: {
-      color: Colors.white,
+      color: Colors.burgundy,
       fontSize: 30,
       fontFamily: 'Pompiere-Regular'
     },

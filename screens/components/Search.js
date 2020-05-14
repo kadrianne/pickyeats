@@ -3,19 +3,39 @@ import useFormField from '../../hooks/useFormField'
 import { StyleSheet, TextInput } from 'react-native'
 import { Button } from 'react-native-elements'
 import makeQuery from '../../helpers/makeQuery'
-// import { GOOGLE_API_KEY } from 'react-native-dotenv'
+import { GOOGLE_API_KEY } from '../../env.config'
 
 export default function Search() {
 
     const [searchText, setSearchText, handleChange] = useFormField()
+
+    const getPlacesList = () => {
+        
+    }
+
+    const getLatLng = (results) => {
+        const latitude = results['results'][0]['geometry']['location']['lat']
+        const longitude = results['results'][0]['geometry']['location']['lng']
+
+        getPlacesList()
+    }
+
+    const geocode = (searchURL) => {
+        fetch(searchURL)
+            .then(response => response.json())
+            .then(getLatLng)
+    }
+
     const handleSubmit = () => {
-        let searchInput = {
-            key: 'AIzaSyD4ppF4tBc8B13FEnBpJwQ3w8EumG4i1xw',
-            address: searchText
+        const searchInput = {
+            address: searchText,
+            key: GOOGLE_API_KEY
         }
+
         const query = makeQuery(searchInput)
-        console.log(query)
-        // console.log(GOOGLE_API_KEY)
+        const searchURL = `https://maps.googleapis.com/maps/api/geocode/json?${query}`
+        
+        geocode(searchURL)
     }
 
     return (

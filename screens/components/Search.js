@@ -1,41 +1,42 @@
 import React, { useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import useFormField from '../../hooks/useFormField'
 import { StyleSheet, TextInput } from 'react-native'
 import { Button } from 'react-native-elements'
 import makeQuery from '../../helpers/makeQuery'
-import { GOOGLE_API_KEY } from '../../env.config'
+import { YELP_API_TOKEN } from '../../env.config'
+
+const yelpAPI = `https://api.yelp.com/v3/businesses/search?`
 
 export default function Search() {
 
-    const [searchText, setSearchText, handleChange] = useFormField()
+    const dispatch = useDispatch()
+    const [searchText, handleChange] = useFormField()
 
-    const getPlacesList = () => {
-        
-    }
-
-    const getLatLng = (results) => {
-        const latitude = results['results'][0]['geometry']['location']['lat']
-        const longitude = results['results'][0]['geometry']['location']['lng']
-
-        getPlacesList()
-    }
-
-    const geocode = (searchURL) => {
-        fetch(searchURL)
-            .then(response => response.json())
-            .then(getLatLng)
+    const getRestaurantList = (results) => {
+        dispatch({type:'SET_RESTAURANTS', restaurants: results['businesses']})
     }
 
     const handleSubmit = () => {
-        const searchInput = {
-            address: searchText,
-            key: GOOGLE_API_KEY
-        }
-
-        const query = makeQuery(searchInput)
-        const searchURL = `https://maps.googleapis.com/maps/api/geocode/json?${query}`
         
-        geocode(searchURL)
+        const query = makeQuery({
+            location: searchText
+        })
+        
+        fetch(`${yelpAPI}${query}`,{
+            headers: {
+                'Authorization': `Bearer ${YELP_API_TOKEN}`
+            }
+        }).then(response => response.json())
+            .then(getRestaurantList)
+        // const searchInput = {
+        //     address: searchText,
+        //     key: GOOGLE_API_KEY
+        // }
+
+        // const searchURL = `https://maps.googleapis.com/maps/api/geocode/json?${query}`
+        
+        // geocode(searchURL)
     }
 
     return (

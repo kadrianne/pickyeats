@@ -4,32 +4,53 @@ import { Button } from 'react-native-elements'
 import Colors from '../../styles/Colors'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
-export default function RestaurantCard() {
+export default function RestaurantCard({restaurant}) {
+
+    const renderCategories = () => {
+        const categories = restaurant.categories.map(category => {
+            return category.title
+        })
+        return categories.join(', ')
+    }
+
+    const renderPrice = () => {
+        const priceArray = restaurant.price.split('')
+        
+        return priceArray.map(dollar => {
+            return <Icon name='dollar' size={20} color="#990000" />
+        })
+    }
 
     return (
         <View style={styles.card}>
             <Image
-                source={{uri: 'https://lh3.googleusercontent.com/p/AF1QipMB_Up2auSF-xHISadr1qEmQlMUbDW_2JxVLNWE=s1600-w400'}} 
+                source={{uri: `${restaurant.image_url}`}} 
                 style={styles.image}
                 />
-            <Text style={styles.title}>SNOOZE AN A.M. EATERY</Text>
-            <View style={styles.infoView}>
-                <View style={styles.ratingView}>
-                    <Text style={styles.rating}>4.7</Text><Icon name='star' size={22} color="#990000" />
+            <View style={styles.restaurantView}>
+                <Text style={styles.title}>{restaurant.name}</Text>
+                <View style={styles.infoView}>
+                    <View style={styles.ratingView}>
+                        <Text style={styles.rating}>{restaurant.rating.toFixed(1)}</Text><Icon name='star' size={22} color="#990000" />
+                    </View>
+                    <Text style={styles.openText}>{restaurant.is_closed ? 'CLOSED' : 'OPEN NOW'}</Text>
+                    <View style={styles.priceView}>
+                        {renderPrice()}
+                    </View>
                 </View>
-                <Text style={styles.openText}>OPEN NOW</Text>
-                <View style={styles.priceView}>
-                    <Icon name='dollar' size={20} color="#990000" />
-                    <Icon name='dollar' size={20} color="#990000" />
+                <View>
+                    {restaurant.location.display_address.length <= 2
+                        ? <><Text style={styles.text}>{restaurant.location.display_address[0]}</Text>
+                        <Text style={styles.text}>{restaurant.location.display_address[1]}</Text></>
+                        : <><Text style={styles.text}>{`${restaurant.location.display_address[0]}, ${restaurant.location.display_address[1]}`}</Text>
+                        <Text style={styles.text}>{restaurant.location.display_address[2]}</Text></>
+                    }
                 </View>
+                <Text style={styles.categoryText}>{renderCategories()}</Text>
+                <Button
+                    buttonStyle={styles.button} titleStyle={styles.buttonText} type='outline'
+                    title='VIEW MORE' />
             </View>
-            <View>
-                <Text style={styles.text}>2262 Larimer St,</Text>
-                <Text style={styles.text}>Denver, CO 80205, USA</Text>
-            </View>
-            <Button
-                buttonStyle={styles.button} titleStyle={styles.buttonText} type='outline'
-                title='VIEW MORE' />
         </View>
     )
 }
@@ -40,7 +61,6 @@ const styles = StyleSheet.create({
         margin: 10,
         height: 550,
         borderRadius: 5,
-        justifyContent: 'space-between',
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
@@ -48,8 +68,7 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.23,
         shadowRadius: 2.62,
-        elevation: 4,
-        position: 'relative'
+        elevation: 4
     },
     image: {
         width: '100%',
@@ -57,11 +76,16 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         margin: 5,
     },
+    restaurantView: {
+        height: 300,
+        justifyContent: 'space-between',
+    },
     title: {
         fontFamily: 'LondrinaShadow-Regular',
-        fontSize: 44,
+        fontSize: 42,
         textAlign: 'center',
-        marginHorizontal: 15
+        marginHorizontal: 15,
+        lineHeight: 45
     },
     text: {
         fontFamily: 'Raleway-Light',
@@ -79,7 +103,7 @@ const styles = StyleSheet.create({
     },
     rating: {
         fontFamily: 'Raleway-SemiBold',
-        fontSize: 16,
+        fontSize: 17,
         color: Colors.burgundy,
         textAlign: 'center',
         paddingRight: 5,
@@ -89,15 +113,31 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: Colors.burgundy
     },
+    space: {
+        flex: 2,
+    },
+    categoryText: {
+        fontFamily: 'Raleway-SemiBold',
+        fontSize: 18,
+        color: Colors.burgundy,
+        marginHorizontal: 15,
+        textAlign: 'center',
+    },
     priceView: {
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'flex-end'
     },
+    bottom: {
+        flexDirection: 'row',
+        marginHorizontal: 15,
+        marginBottom: 15
+    },
     button: {
         borderColor: Colors.burgundy,
         borderWidth: 1,
-        margin: 15
+        marginHorizontal: 15,
+        marginBottom: 5
     },
     buttonText: {
         color: Colors.burgundy,

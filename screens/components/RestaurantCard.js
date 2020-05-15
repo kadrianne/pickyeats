@@ -1,11 +1,14 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { StyleSheet, View, Text, Image } from 'react-native'
+import { useSelector } from 'react-redux'
 import { Button } from 'react-native-elements'
 import Colors from '../../styles/Colors'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import ButtonSection from './ButtonSection'
 
-export default function RestaurantCard({restaurant}) {
+export default function RestaurantCard() {
+
+    const restaurant = useSelector(state => state.currentRestaurant)
 
     const renderCategories = () => {
         const categories = restaurant.categories.map(category => {
@@ -22,6 +25,10 @@ export default function RestaurantCard({restaurant}) {
         })
     }
 
+    // useEffect(() => {
+
+    // },[restaurant])
+
     return (
         <>
         <View style={styles.card}>
@@ -34,7 +41,7 @@ export default function RestaurantCard({restaurant}) {
                 <View style={styles.ratingView}>
                     <Text style={styles.rating}>{restaurant.rating.toFixed(1)}</Text><Icon name='star' size={22} color="#990000" />
                 </View>
-                <Text style={styles.openText}>{restaurant.is_closed ? 'CLOSED' : 'OPEN NOW'}</Text>
+                <Text style={styles.openText}>OPEN NOW</Text>
                 <View style={styles.priceView}>
                     {renderPrice()}
                 </View>

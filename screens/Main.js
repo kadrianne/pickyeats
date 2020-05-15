@@ -11,25 +11,23 @@ export default function Main() {
 
   const dispatch = useDispatch()
   const restaurantList = useSelector(state => state.restaurantList)
+  const currentRestaurant = useSelector(state => state.currentRestaurant)
 
-  const removeRestaurantFromList = (objectPosition) => {
-    dispatch({type:'REMOVE_RESTAURANT', restaurant: restaurantList[objectPosition]})
-  }
-  
-  const renderCard = () => {
+  const assignRestaurant = () => {
     const objectPosition = getRandomInteger(0,restaurantList.length)
-    // removeRestaurantFromList(objectPosition)
-    return <RestaurantCard restaurant={restaurantList[objectPosition]} />
+    dispatch({type:'SET_RESTAURANT', restaurant: restaurantList[objectPosition]})
   }
   
-  // useEffect(() => {
-  //     console.log(restaurantList)
-  // },[restaurantList])
+  useEffect(() => {
+    if (restaurantList.length !== 0) {
+      assignRestaurant()
+    }
+  },[restaurantList])
 
     return (
         <SafeAreaView style={styles.body}>
           <Header />
-          {restaurantList.length === 0 ? <Search /> : renderCard()}
+          {!currentRestaurant.alias ? <Search /> : <RestaurantCard />}
         </SafeAreaView>
     )
 }

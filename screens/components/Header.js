@@ -2,13 +2,11 @@ import React from 'react'
 import { StyleSheet, View, Image } from 'react-native'
 import Colors from '../../styles/Colors'
 import Icon from 'react-native-vector-icons/FontAwesome'
-import Search from './Search'
 
 export default function Header() {
     return (
         <View style={styles.nav}>
             <Image style={{height: 35, width: 35}} source={require('../../assets/logo/pickyeats-icon.png')} />
-            <Search />
             <Icon name='user-circle' size={30} color="#990000" />
         </View>
     )

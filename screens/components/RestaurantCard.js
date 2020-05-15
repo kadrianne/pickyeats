@@ -4,12 +4,13 @@ import { Button } from 'react-native-elements'
 import Colors from '../../styles/Colors'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
-export default function RestaurantCard() {
+export default function RestaurantCard({restaurant}) {
+    console.log(restaurant)
 
     return (
         <View style={styles.card}>
             <Image
-                source={{uri: 'https://lh3.googleusercontent.com/p/AF1QipMB_Up2auSF-xHISadr1qEmQlMUbDW_2JxVLNWE=s1600-w400'}} 
+                source={{uri: 'https://s3-media4.fl.yelpcdn.com/bphoto/cniSi66T4iS6nqCdML6HUQ/o.jpg'}} 
                 style={styles.image}
                 />
             <Text style={styles.title}>SNOOZE AN A.M. EATERY</Text>

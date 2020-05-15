@@ -1,11 +1,14 @@
 import React from 'react'
 import { StyleSheet, View, Text, Image } from 'react-native'
+import { useSelector } from 'react-redux'
 import { Button } from 'react-native-elements'
 import Colors from '../../styles/Colors'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import ButtonSection from './ButtonSection'
 
-export default function RestaurantCard({restaurant}) {
+export default function RestaurantCard() {
+
+    const restaurant = useSelector(state => state.currentRestaurant)
 
     const renderCategories = () => {
         const categories = restaurant.categories.map(category => {

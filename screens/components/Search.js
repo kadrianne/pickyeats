@@ -16,7 +16,7 @@ export default function Search() {
     const [searchText, handleChange] = useFormField()
 
     const setRestaurantList = (results) => {
-        dispatch({type:'SET_RESTAURANTS', restaurants: results['businesses']})
+        dispatch({type:'SET_RESTAURANTS', restaurants: results.businesses})
     }
 
     const handleSubmit = () => {

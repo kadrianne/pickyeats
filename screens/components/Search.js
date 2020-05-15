@@ -22,7 +22,8 @@ export default function Search() {
     const handleSubmit = () => {
         
         const query = makeQuery({
-            location: searchText
+            location: searchText,
+            open_now: true
         })
         
         fetch(`${yelpAPI}${query}`,{

@@ -34,7 +34,7 @@ export default function RestaurantCard({restaurant}) {
                 <View style={styles.ratingView}>
                     <Text style={styles.rating}>{restaurant.rating.toFixed(1)}</Text><Icon name='star' size={22} color="#990000" />
                 </View>
-                <Text style={styles.openText}>{restaurant.is_closed ? 'CLOSED' : 'OPEN NOW'}</Text>
+                <Text style={styles.openText}>OPEN NOW</Text>
                 <View style={styles.priceView}>
                     {renderPrice()}
                 </View>

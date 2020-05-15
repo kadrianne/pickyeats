@@ -13,13 +13,8 @@ export default function Main() {
   const restaurantList = useSelector(state => state.restaurantList)
   const currentRestaurant = useSelector(state => state.currentRestaurant)
 
-  const removeRestaurantFromList = (objectPosition) => {
-    dispatch({type:'REMOVE_RESTAURANT', restaurant: restaurantList[objectPosition]})
-  }
-  
   const assignRestaurant = () => {
     const objectPosition = getRandomInteger(0,restaurantList.length)
-    // removeRestaurantFromList(objectPosition)
     dispatch({type:'SET_RESTAURANT', restaurant: restaurantList[objectPosition]})
   }
   

@@ -1,10 +1,26 @@
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
+import { useSelector, useDispatch } from 'react-redux'
 import { Button } from 'react-native-elements'
-import Icon from 'react-native-vector-icons/FontAwesome'
 import Colors from '../../styles/Colors'
 
 export default function ButtonSection() {
+    
+    const dispatch = useDispatch()
+    const currentRestaurant = useSelector(state => state.currentRestaurant)
+
+    const removeRestaurantFromList = () => {
+        dispatch({type:'REMOVE_RESTAURANT', restaurant: currentRestaurant})
+    }
+      
+    const handleLike = () => {
+        console.log('like')
+    }
+    
+    const handleDislike = () => {
+        removeRestaurantFromList()
+    }
+
     return (
         <View style={styles.buttonView}>
             <Button
@@ -15,6 +31,7 @@ export default function ButtonSection() {
                     size: 35,
                     color: Colors.orange
                 }}
+                onPress={handleDislike}
             />
             <Button
                 raised
@@ -24,6 +41,7 @@ export default function ButtonSection() {
                     size: 35,
                     color: Colors.orange
                 }}
+                onPress={handleLike}
             />
         </View>
     )

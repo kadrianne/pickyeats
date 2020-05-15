@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { StyleSheet, View, Text, Image } from 'react-native'
 import { useSelector } from 'react-redux'
 import { Button } from 'react-native-elements'
@@ -24,6 +24,10 @@ export default function RestaurantCard() {
             return <Icon name='dollar' size={20} color="#990000" />
         })
     }
+
+    // useEffect(() => {
+
+    // },[restaurant])
 
     return (
         <>

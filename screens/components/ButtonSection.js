@@ -19,23 +19,18 @@ export default function ButtonSection() {
         const likedRestaurant = {
             yelp_id: currentRestaurant.id,
             name: currentRestaurant.name,
-            party_id: 1,
-            user_id: 2
+            party: 1,
+            user: 2
         }
 
-        fetch(`${BACKEND_URL}/users`)
-        //     .then(response => response.json())
-        //     .then(console.log)
-        // // fetch(`${BACKEND_URL}/liked-restaurants`, {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-type': 'application/json',
-        //         'Accept': 'application/json'
-        //     },
-        //     body: JSON.stringify(likedRestaurant)
-        // })
-        // .then(response => response.json())
-        //     .then(console.log)
+        fetch(`${BACKEND_URL}/liked-restaurants/`, {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(likedRestaurant)
+        }).then(console.log)
     }
       
     const handleLike = () => {

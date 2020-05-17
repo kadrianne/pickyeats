@@ -4,6 +4,8 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Button } from 'react-native-elements'
 import Colors from '../../styles/Colors'
 
+import { BACKEND_URL } from '../../env.config'
+
 export default function ButtonSection() {
     
     const dispatch = useDispatch()
@@ -12,9 +14,28 @@ export default function ButtonSection() {
     const removeRestaurantFromList = () => {
         dispatch({type:'REMOVE_RESTAURANT', restaurant: currentRestaurant})
     }
+
+    const addRestaurantToLiked = () => {
+        const likedRestaurant = {
+            yelp_id: currentRestaurant.id,
+            name: currentRestaurant.name,
+            party: 1,
+            user: 2
+        }
+
+        fetch(`${BACKEND_URL}/liked-restaurants/`, {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(likedRestaurant)
+        }).then(console.log)
+    }
       
     const handleLike = () => {
-        console.log('like')
+        removeRestaurantFromList()
+        addRestaurantToLiked()
     }
     
     const handleDislike = () => {

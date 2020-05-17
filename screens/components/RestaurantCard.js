@@ -18,11 +18,13 @@ export default function RestaurantCard() {
     }
 
     const renderPrice = () => {
-        const priceArray = restaurant.price.split('')
-        
-        return priceArray.map(dollar => {
-            return <Icon name='dollar' size={20} color="#990000" />
-        })
+        if (restaurant.price){
+            const priceArray = restaurant.price.split('')
+            
+            return priceArray.map(dollar => {
+                return <Icon name='dollar' size={20} color="#990000" />
+            })
+        }
     }
 
     // useEffect(() => {

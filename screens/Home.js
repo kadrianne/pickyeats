@@ -1,25 +1,25 @@
 import React, { useState } from 'react'
 import { SafeAreaView, StyleSheet, View, Image, ScrollView } from 'react-native'
 import Colors from '../styles/Colors'
-import { Button } from 'react-native-elements'
+import { Button, ButtonGroup } from 'react-native-elements'
 import AccountForm from './components/AccountForm'
 
 export default function Home() {
   
   const [ accountForm, setAccountForm ] = useState('')
+  const [ selectedIndex, setSelectedIndex ] = useState()
   
-  const displayLogin = () => {
-    setAccountForm('login')
-  }
+  const buttons = ['LOGIN', 'SIGN UP']
+  const buttonForms = ['login','signup']
 
-  const displaySignup = () => {
-    setAccountForm('signup')
+  const handleDisplay = (selectedIndex) => {
+    setSelectedIndex(selectedIndex)
+    setAccountForm(buttonForms[selectedIndex])
   }
 
   const displayForm = {
-    'signup': <AccountForm type='signup' />,
     'login': <AccountForm type='login' />,
-    '': null
+    'signup': <AccountForm type='signup' />
   }
 
   return (
@@ -27,12 +27,18 @@ export default function Home() {
       <ScrollView contentContainerStyle={styles.body}>
         <Image style={{height: 250, aspectRatio: 7/4, marginBottom: -5 }} source={require('../assets/logo/pickyeats.png')} />
         <View style={styles.container}>
-            <Button buttonStyle={styles.button} titleStyle={styles.buttonText} type="clear" title="LOGIN" onPress={displayLogin} />
-            <Button buttonStyle={styles.button} titleStyle={styles.buttonText} type="clear" title="SIGN UP" onPress={displaySignup} />
-        </View>
-        {/* <ScrollView> */}
+          <ButtonGroup
+            onPress={handleDisplay}
+            selectedIndex={selectedIndex}
+            buttons={buttons}
+            textStyle={styles.buttonText}
+            innerBorderStyle={{color: Colors.orange}}
+            selectedButtonStyle={styles.selectedButton}
+            selectedTextStyle={{color: Colors.burgundy}}
+            containerStyle={styles.buttonGroup}
+          />
+            </View>
           {displayForm[accountForm]}
-        {/* </ScrollView> */}
       </ScrollView>
     </SafeAreaView>
   )
@@ -45,15 +51,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: Colors.orange,
   },
-  button: {
-    marginTop: 0,
+  buttonGroup: {
+    width: 300,
     marginBottom: 10,
-    paddingHorizontal: 20,
+    backgroundColor: Colors.orange,
+    borderColor: Colors.orange,
   },
   buttonText: {
-    color: Colors.burgundy,
+    color: Colors.white,
+    paddingTop: 10,
     fontSize: 30,
     fontFamily: 'Pompiere-Regular'
+  },
+  selectedButton: {
+    backgroundColor: Colors.orange, 
+    borderStyle: 'solid', 
+    borderColor: Colors.burgundy, 
+    borderWidth: 1, 
+    borderBottomWidth: 0
   },
   container: {
     flexDirection: 'row',

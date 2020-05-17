@@ -11,7 +11,6 @@ export default function AccountForm({ type }) {
         <View style={styles.form}>
             {type === 'signup' ? <Input
                 placeholder='First Name'
-                containerStyle={styles.container}
                 inputContainerStyle={{...styles.field, paddingHorizontal: 2}}
                 leftIcon={{ type: 'font-awesome', name: 'user', size: 24, color: Colors.darkOrange }}
             /> : null }
@@ -42,9 +41,6 @@ const styles = StyleSheet.create({
         padding: 30,
         borderRadius: 10,
         marginBottom: 25,
-    },
-    container: {
-        fontFamily: 'Raleway-Regular'
     },
     field: {
         width: 250,

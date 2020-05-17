@@ -27,10 +27,6 @@ export default function RestaurantCard() {
         }
     }
 
-    // useEffect(() => {
-
-    // },[restaurant])
-
     return (
         <>
         <View style={styles.card}>

@@ -30,7 +30,7 @@ export default function ButtonSection() {
                 'Accept': 'application/json'
             },
             body: JSON.stringify(likedRestaurant)
-        }).then(console.log)
+        })
     }
       
     const handleLike = () => {

@@ -1,4 +1,4 @@
-export default function navigationReducer(state='main',action) {
+export default function navigationReducer(state='home',action) {
     switch (action.type) {
         case 'ACCOUNT': 
             return 'account'

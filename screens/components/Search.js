@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
-import { StyleSheet, TextInput } from 'react-native'
-import { useSelector, useDispatch } from 'react-redux'
+import React from 'react'
+import { StyleSheet, View, Text, TextInput } from 'react-native'
+import { useDispatch } from 'react-redux'
 import useFormField from '../../hooks/useFormField'
 import { Button } from 'react-native-elements'
 import makeQuery from '../../helpers/makeQuery'
@@ -36,7 +36,8 @@ export default function Search() {
     }
 
     return (
-        <>
+        <View style={styles.body}>
+            <Text style={styles.heading}>WHERE ARE WE LOOKING?</Text>
             <TextInput
                 name='search'
                 style={styles.search}
@@ -44,16 +45,26 @@ export default function Search() {
                 onChangeText={handleChange}
                 value={searchText}
             />
-            <Button buttonStyle={styles.button} onPress={handleSubmit} titleStyle={styles.buttonText} type='outline' title='ENTER'/>
-        </>
+            <Button buttonStyle={styles.button} titleStyle={styles.buttonText} title='FIND FOOD NOW' onPress={handleSubmit} />
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
+    body: {
+        alignItems: 'center',
+    },
+    heading: {
+        fontFamily: 'Raleway-SemiBold',
+        textAlign: 'center',
+        fontSize: 36,
+        margin: 50,
+        color: Colors.burgundy
+    },
     search: {
         borderColor: Colors.burgundy,
         width: 250,
-        borderWidth: 1,
+        borderWidth: 2,
         borderRadius: 100,
         paddingLeft: 10,
         alignContent: 'center',
@@ -61,13 +72,12 @@ const styles = StyleSheet.create({
         fontSize: 16
     },    
     button: {
-        borderColor: Colors.burgundy,
-        borderWidth: 1,
-        margin: 15
+        backgroundColor: Colors.burgundy,
+        margin: 25
     },
     buttonText: {
-        color: Colors.burgundy,
-        fontSize: 24,
+        color: Colors.white,
+        fontSize: 30,
         fontFamily: 'Pompiere-Regular'
     }
 })

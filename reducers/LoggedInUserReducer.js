@@ -1,7 +1,7 @@
-export default function navigationReducer(state='home',action) {
+export default function loggedInUserReducer(state={},action) {
     switch (action.type) {
         case 'LOGGED_IN': 
-            return 'main'
+            return action.user
         default: 
             return state
     }

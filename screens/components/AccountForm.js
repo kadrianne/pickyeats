@@ -20,7 +20,7 @@ export default function AccountForm({ type }) {
     const handleLogin = (results) => {
         console.log(results)
         if (results.user) {
-            dispatch({type:'MAIN'})
+            dispatch({type:'LOGGED_IN', user: results.user})
             AsyncStorage.setItem('@storage_Key', results.token)
         }
     }

@@ -4,5 +4,7 @@ import restaurantList from './RestaurantListReducer'
 import currentRestaurant from './CurrentRestaurantReducer'
 import loggedInUser from './LoggedInUserReducer'
 import mainPage from './MainPageReducer'
+import reviews from './ReviewsReducer'
+import moreRestaurantInfo from './MoreRestaurantInfoReducer'
 
-export default combineReducers({navigation,restaurantList,currentRestaurant,loggedInUser,mainPage})
+export default combineReducers({navigation,restaurantList,currentRestaurant,loggedInUser,mainPage,reviews,moreRestaurantInfo})

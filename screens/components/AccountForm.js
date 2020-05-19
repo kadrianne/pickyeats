@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux'
 import { Input, Button } from 'react-native-elements'
 import Colors from '../../styles/Colors'
 import useFormField from '../../hooks/useFormField'
+import AsyncStorage from '@react-native-community/async-storage'
 
 import { BACKEND_URL } from '../../env.config'
 
@@ -20,9 +21,16 @@ export default function AccountForm({ type }) {
         console.log(results)
         if (results.user) {
             dispatch({type:'MAIN'})
+            AsyncStorage.setItem('@storage_Key', results.token)
         }
     }
 
+    // const getToken = async () => {
+    //     const value = await AsyncStorage.getItem('@storage_Key')
+    //     console.log(value)
+    // }
+    // getToken()
+    
     const createAccount = () => {
         const accountData = { username, email, password}
 

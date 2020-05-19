@@ -1,43 +1,63 @@
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
+import { useDispatch } from 'react-redux'
 import { Input, Button } from 'react-native-elements'
 import Colors from '../../styles/Colors'
 import useFormField from '../../hooks/useFormField'
+import AsyncStorage from '@react-native-community/async-storage'
 
 import { BACKEND_URL } from '../../env.config'
 
 export default function AccountForm({ type }) {
-    
-    const [ name, handleNameChange ] = useFormField('')
-    const [ phone, handlePhoneChange ] = useFormField('')
+
+    const [ username, handleUsernameChange ] = useFormField('')
+    // const [ phone, handlePhoneChange ] = useFormField('')
     const [ email, handleEmailChange ] = useFormField('')
     const [ password, handlePasswordChange ] = useFormField('')
 
-    const createAccount = () => {
-        const accountData = { name, phone, email, password}
+    const dispatch = useDispatch()
 
-        fetch(`${BACKEND_URL}/users/`, {
+    const handleLogin = (results) => {
+        console.log(results)
+        if (results.user) {
+            dispatch({type:'MAIN'})
+            AsyncStorage.setItem('@storage_Key', results.token)
+        }
+    }
+
+    // const getToken = async () => {
+    //     const value = await AsyncStorage.getItem('@storage_Key')
+    //     console.log(value)
+    // }
+    // getToken()
+    
+    const createAccount = () => {
+        const accountData = { username, email, password}
+
+        fetch(`${BACKEND_URL}/api/auth/signup`, {
             method: 'POST',
             headers: {
                 'Content-type': 'application/json',
                 'Accept': 'application/json'
             },
             body: JSON.stringify(accountData)
-        }).then(console.log)
+        }).then(response => response.json())
+        .then(handleLogin)
 
     }
 
     const loginUser = () => {
-        const loginData = { email, password }
+        const loginData = { username, password }
 
-        fetch(`${BACKEND_URL}/login`, {
+        fetch(`${BACKEND_URL}/api/auth/login`, {
             method: 'POST',
             headers: {
                 'Content-type': 'application/json',
                 'Accept': 'application/json'
             },
             body: JSON.stringify(loginData)
-        })
+        }).then(response => response.json())
+        .then(handleLogin)
     }
 
     const handleSubmit = () => {
@@ -50,27 +70,27 @@ export default function AccountForm({ type }) {
 
     return (
         <View style={styles.form}>
-            {type === 'signup' ? <Input
-                placeholder='Full Name'
+            <Input
+                placeholder='Username'
                 inputContainerStyle={{...styles.field, paddingHorizontal: 2}}
                 leftIcon={{ type: 'font-awesome', name: 'user', size: 24, color: Colors.darkOrange }}
-                value={name}
-                onChangeText={handleNameChange}
-            /> : null }
-            {type === 'signup' ? <Input
+                value={username}
+                onChangeText={handleUsernameChange}
+            />
+            {/* {type === 'signup' ? <Input
                 placeholder='Phone Number'
                 inputContainerStyle={styles.field}
                 leftIcon={{ type: 'font-awesome', name: 'phone', size: 24, color: Colors.darkOrange }}
                 value={phone}
                 onChangeText={handlePhoneChange}
-            /> : null }
-            <Input
+            /> : null } */}
+            {type === 'signup' ? <Input
                 placeholder='Email'
                 inputContainerStyle={styles.field}
                 leftIcon={{ type: 'font-awesome', name: 'envelope', size: 20, color: Colors.darkOrange }}
                 value={email}
                 onChangeText={handleEmailChange}
-            />
+            /> : null }
             <Input
                 secureTextEntry={true}
                 placeholder='Password'
@@ -89,7 +109,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.white,
         padding: 30,
         borderRadius: 10,
-        marginBottom: 25,
+        marginVertical: 15,
     },
     field: {
         width: 250,
@@ -100,7 +120,7 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: Colors.white,
-        fontSize: 24,
+        fontSize: 26,
         fontFamily: 'Pompiere-Regular'
     }
   })

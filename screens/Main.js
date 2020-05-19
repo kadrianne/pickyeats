@@ -11,13 +11,18 @@ export default function Main() {
 
   const dispatch = useDispatch()
   const restaurantList = useSelector(state => state.restaurantList)
-  const currentRestaurant = useSelector(state => state.currentRestaurant)
+  const mainPage = useSelector(state => state.mainPage)
 
   const assignRestaurant = () => {
     const objectPosition = getRandomInteger(0,restaurantList.length)
     dispatch({type:'SET_RESTAURANT', restaurant: restaurantList[objectPosition]})
   }
   
+  const displaySection = {
+    'search': <Search />,
+    'restaurant': <RestaurantCard />
+  }
+
   useEffect(() => {
     if (restaurantList.length !== 0) {
       assignRestaurant()
@@ -27,7 +32,7 @@ export default function Main() {
     return (
         <SafeAreaView style={styles.body}>
           <Header />
-          {!currentRestaurant.alias ? <Search /> : <RestaurantCard />}
+          {displaySection[mainPage]}
         </SafeAreaView>
     )
 }

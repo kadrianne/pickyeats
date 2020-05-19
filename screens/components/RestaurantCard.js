@@ -1,18 +1,21 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { StyleSheet, ScrollView, View, Text, Image } from 'react-native'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { Button } from 'react-native-elements'
 import Colors from '../../styles/Colors'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import ButtonSection from './ButtonSection'
+import Review from './Review'
+import { SliderBox } from 'react-native-image-slider-box'
 import { YELP_API_TOKEN } from '../../env.config'
 
 export default function RestaurantCard() {
 
+    const dispatch = useDispatch()
     const restaurant = useSelector(state => state.currentRestaurant)
+    const moreInfo = useSelector(state => state.moreRestaurantInfo)
+    const reviews = useSelector(state => state.reviews)
     const [ showMoreInfo, setShowMoreInfo ] = useState(false)
-    const [ restaurantInfo, setRestaurantInfo ] = useState([])
-    const [ reviews, setReviews ] = useState([])
 
     const renderCategories = () => {
         const categories = restaurant.categories.map(category => {
@@ -31,6 +34,10 @@ export default function RestaurantCard() {
         }
     }
 
+    const setMoreInfo = (results) => {
+        dispatch({type: 'SET_INFO', info: results})
+    }
+
     const getMoreInfo = () => {
         fetch(`https://api.yelp.com/v3/businesses/${restaurant.id}`, {
             headers: {
@@ -38,7 +45,11 @@ export default function RestaurantCard() {
             }
         })
             .then(response => response.json())
-            .then(results => setRestaurantInfo(results))
+            .then(setMoreInfo)
+    }
+
+    const setReviews = (reviews) => {
+        dispatch({type:'SET_REVIEWS', reviews: reviews})
     }
 
     const getReviews = () => {
@@ -48,19 +59,14 @@ export default function RestaurantCard() {
             }
         })
             .then(response => response.json())
-            .then(results => setReviews(Array.from(results.reviews)))
+            .then(results => setReviews(results.reviews))
     }
 
     const handleViewMore = () => {
+        getMoreInfo()
+        getReviews()
        setShowMoreInfo(previousState => !previousState)
     }
-
-    useEffect(() => {
-        if (showMoreInfo === false) {
-            getMoreInfo()
-            getReviews()
-        }
-    },[showMoreInfo])
 
     const getHours = () => {
         // hours = restaurantInfo.hours
@@ -69,71 +75,72 @@ export default function RestaurantCard() {
 
     const displayReviews = () => {
         return reviews.map(review => {
-            return (
-                <View>
-                    <Text style={styles.text}>{review.user.name}</Text>
-                    <Text style={styles.text}>{review.text}</Text>
-                </View>
-            )
+            return <Review review={review} />
         })
     }
 
     return (
         <>
-        <View style={showMoreInfo === false ? styles.card : styles.cardExpanded}>
-            <Image
+        <View style={ showMoreInfo === false ? styles.card : styles.cardExpanded }>
+            { showMoreInfo === false
+                ? <Image
                 source={{uri: `${restaurant.image_url}`}} 
                 style={styles.image}
                 />
-            <ScrollView contentContainerStyle={showMoreInfo === false ? styles.cardInfo : null}>
+                // : null
+                : <View style={{position: 'relative', zIndex: 1, height: '30%'}}>
+                    {moreInfo.photos ? <SliderBox imageComponentStyle={styles.image} images={moreInfo.photos} /> : null}
+                </View>
+            }
             <Text style={styles.title}>{restaurant.name}</Text>
-            <View style={styles.infoView}>
-                <View style={styles.ratingView}>
-                    <Text style={styles.rating}>{restaurant.rating.toFixed(1)}</Text><Icon name='star' size={22} color="#990000" />
+            <ScrollView contentContainerStyle={showMoreInfo === false ? styles.cardInfo : null}>
+                <View style={styles.infoView}>
+                    <View style={styles.ratingView}>
+                        <Text style={styles.rating}>{restaurant.rating.toFixed(1)}</Text><Icon name='star' size={22} color="#990000" />
+                    </View>
+                    <View style={styles.priceView}>
+                        {renderPrice()}
+                    </View>
                 </View>
-                <Text style={styles.openText}>OPEN NOW</Text>
-                <View style={styles.priceView}>
-                    {renderPrice()}
+                <Text style={styles.boldText}>{renderCategories()}</Text>
+                <View style={styles.address}>
+                    {restaurant.location.display_address.length <= 2
+                        ? <><Text style={styles.text}>{restaurant.location.display_address[0]}</Text>
+                        <Text style={styles.text}>{restaurant.location.display_address[1]}</Text></>
+                        : <><Text style={styles.text}>{`${restaurant.location.display_address[0]}, ${restaurant.location.display_address[1]}`}</Text>
+                        <Text style={styles.text}>{restaurant.location.display_address[2]}</Text></>
+                    }
+                    { showMoreInfo === false ? null : <Text style={styles.text}>{restaurant.display_phone}</Text> }
                 </View>
-            </View>
-            <View>
-                {restaurant.location.display_address.length <= 2
-                    ? <><Text style={styles.text}>{restaurant.location.display_address[0]}</Text>
-                    <Text style={styles.text}>{restaurant.location.display_address[1]}</Text></>
-                    : <><Text style={styles.text}>{`${restaurant.location.display_address[0]}, ${restaurant.location.display_address[1]}`}</Text>
-                    <Text style={styles.text}>{restaurant.location.display_address[2]}</Text></>
-                }
-            </View>
-            <Text style={styles.categoryText}>{renderCategories()}</Text>
-            { showMoreInfo === false 
-            ? <Button
-                buttonStyle={styles.button} titleStyle={styles.buttonText} type='outline'
-                icon={{
-                    name: 'arrow-downward',
-                    size: 30,
-                    color: Colors.burgundy
-                }}
-                iconRight
-                title='VIEW MORE'
-                onPress={handleViewMore}
-                /> 
-            : <>
-                <Text style={styles.text}>{restaurant.display_phone}</Text>
-                <Text >Reviews: {restaurant.review_count}</Text>
-                {displayReviews()}
-                {/* <Text >{restaurantInfo.hours}</Text> */}
-                <Button
+                { showMoreInfo === false 
+                ? <Button
                     buttonStyle={styles.button} titleStyle={styles.buttonText} type='outline'
                     icon={{
-                        name: 'arrow-upward',
+                        name: 'arrow-downward',
                         size: 30,
                         color: Colors.burgundy
                     }}
                     iconRight
-                    title='SHOW LESS'
+                    title='VIEW MORE'
                     onPress={handleViewMore}
-                /> 
-            </> }
+                    /> 
+                : <>
+                    {/* <Text style={styles.openText}>OPEN NOW</Text> */}
+                    <Text style={styles.boldText}>Reviews ({restaurant.review_count})</Text>
+                    {displayReviews()}
+                    {/* <Text >{restaurantInfo.hours}</Text> */}
+                    <Button
+                        buttonStyle={styles.button} titleStyle={styles.buttonText} type='outline'
+                        icon={{
+                            name: 'arrow-upward',
+                            size: 30,
+                            color: Colors.burgundy
+                        }}
+                        iconRight
+                        title='SHOW LESS'
+                        onPress={handleViewMore}
+                    /> 
+                </> }
             </ScrollView>
         </View>
         { showMoreInfo === false ? <ButtonSection /> : null }
@@ -156,27 +163,33 @@ const styles = StyleSheet.create({
         shadowRadius: 2.62,
         elevation: 4,
     },
-    cardInfo: {
-        marginTop: 5,
-        height: '100%',
-        justifyContent: 'space-between'
-    },
     cardExpanded: {
         backgroundColor: Colors.orange,
         height: '92%',
+        width: '100%',
         justifyContent: 'space-between'
+    },
+    cardInfo: {
+        marginTop: 5,
+        height: '100%',
+        justifyContent: 'space-between',
+        position: 'relative',
+        zIndex: 2
     },
     image: {
         width: '100%',
         aspectRatio: 5/3,
         borderRadius: 5,
         margin: 5,
+        position: 'relative',
+        zIndex: 1
     },
     title: {
         fontFamily: 'LondrinaShadow-Regular',
         fontSize: 42,
         textAlign: 'center',
         marginHorizontal: 15,
+        marginBottom: 5,
         lineHeight: 45
     },
     text: {
@@ -186,7 +199,8 @@ const styles = StyleSheet.create({
     },
     infoView:{
         flexDirection: 'row',
-        marginHorizontal: 15
+        marginHorizontal: 15,
+        marginVertical: 10
     },
     ratingView: {
         flexDirection: 'row',
@@ -205,17 +219,21 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: Colors.burgundy,
     },
-    categoryText: {
+    boldText: {
         fontFamily: 'Raleway-SemiBold',
         fontSize: 18,
         color: Colors.burgundy,
         marginHorizontal: 15,
         textAlign: 'center',
+        marginVertical: 10
     },
     priceView: {
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'flex-end'
+    },
+    address: {
+        marginVertical: 10
     },
     button: {
         borderColor: Colors.burgundy,

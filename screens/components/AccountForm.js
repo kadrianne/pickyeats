@@ -1,5 +1,6 @@
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
+import { useDispatch } from 'react-redux'
 import { Input, Button } from 'react-native-elements'
 import Colors from '../../styles/Colors'
 import useFormField from '../../hooks/useFormField'
@@ -7,11 +8,20 @@ import useFormField from '../../hooks/useFormField'
 import { BACKEND_URL } from '../../env.config'
 
 export default function AccountForm({ type }) {
-    
+
     const [ username, handleUsernameChange ] = useFormField('')
-    const [ phone, handlePhoneChange ] = useFormField('')
+    // const [ phone, handlePhoneChange ] = useFormField('')
     const [ email, handleEmailChange ] = useFormField('')
     const [ password, handlePasswordChange ] = useFormField('')
+
+    const dispatch = useDispatch()
+
+    const handleLogin = (results) => {
+        console.log(results)
+        if (results.user) {
+            dispatch({type:'MAIN'})
+        }
+    }
 
     const createAccount = () => {
         const accountData = { username, email, password}
@@ -24,7 +34,7 @@ export default function AccountForm({ type }) {
             },
             body: JSON.stringify(accountData)
         }).then(response => response.json())
-        .then(console.log)
+        .then(handleLogin)
 
     }
 
@@ -39,7 +49,7 @@ export default function AccountForm({ type }) {
             },
             body: JSON.stringify(loginData)
         }).then(response => response.json())
-        .then(console.log)
+        .then(handleLogin)
     }
 
     const handleSubmit = () => {

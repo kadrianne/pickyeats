@@ -10,9 +10,9 @@ import { BACKEND_URL } from '../../env.config'
 
 export default function AccountForm({ type }) {
 
+    const [ name, handleNameChange ] = useFormField('')
+    const [ phone, handlePhoneChange ] = useFormField('')
     const [ username, handleUsernameChange ] = useFormField('')
-    // const [ phone, handlePhoneChange ] = useFormField('')
-    const [ email, handleEmailChange ] = useFormField('')
     const [ password, handlePasswordChange ] = useFormField('')
 
     const dispatch = useDispatch()
@@ -32,7 +32,7 @@ export default function AccountForm({ type }) {
     // getToken()
     
     const createAccount = () => {
-        const accountData = { username, email, password}
+        const accountData = { name, phone, username, password}
 
         fetch(`${BACKEND_URL}/api/auth/signup`, {
             method: 'POST',
@@ -71,25 +71,25 @@ export default function AccountForm({ type }) {
     return (
         <View style={styles.form}>
             <Input
-                placeholder='Username'
-                inputContainerStyle={{...styles.field, paddingHorizontal: 2}}
-                leftIcon={{ type: 'font-awesome', name: 'user', size: 24, color: Colors.darkOrange }}
+                placeholder='Email'
+                inputContainerStyle={styles.field}
+                leftIcon={{ type: 'font-awesome', name: 'envelope', size: 20, color: Colors.darkOrange }}
                 value={username}
                 onChangeText={handleUsernameChange}
             />
-            {/* {type === 'signup' ? <Input
+            {type === 'signup' ? <Input
+                placeholder='Full Name'
+                inputContainerStyle={{...styles.field, paddingHorizontal: 2}}
+                leftIcon={{ type: 'font-awesome', name: 'user', size: 24, color: Colors.darkOrange }}
+                value={name}
+                onChangeText={handleNameChange}
+            /> : null }
+            {type === 'signup' ? <Input
                 placeholder='Phone Number'
                 inputContainerStyle={styles.field}
                 leftIcon={{ type: 'font-awesome', name: 'phone', size: 24, color: Colors.darkOrange }}
                 value={phone}
                 onChangeText={handlePhoneChange}
-            /> : null } */}
-            {type === 'signup' ? <Input
-                placeholder='Email'
-                inputContainerStyle={styles.field}
-                leftIcon={{ type: 'font-awesome', name: 'envelope', size: 20, color: Colors.darkOrange }}
-                value={email}
-                onChangeText={handleEmailChange}
             /> : null }
             <Input
                 secureTextEntry={true}

@@ -6,8 +6,9 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 export default function Header() {
     return (
         <View style={styles.nav}>
-            <Image style={{height: 35, width: 35}} source={require('../../assets/logo/pickyeats-icon.png')} />
-            <Icon name='user-circle' size={30} color="#990000" />
+            <Icon name='users' size={30} color="#990000" />
+            <Image style={{height: 60, width: 170}} source={require('../../assets/logo/Logo.png')} />
+            <Icon name='user' size={30} color="#990000" />
         </View>
     )
 }

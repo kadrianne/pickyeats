@@ -1,18 +1,20 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, Text, TextInput } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import useFormField from '../../hooks/useFormField'
 import { Input, Button } from 'react-native-elements'
-// import makeQuery from '../../helpers/makeQuery'
 import Colors from '../../styles/Colors'
+import UserResults from './UserResults'
 import { BACKEND_URL } from '../../env.config'
 
 export default function Search() {
 
     const dispatch = useDispatch()
     const loggedInUser = useSelector(state => state.loggedInUser)
+    const activeParty = useSelector(state => state.activeParty)
     const [ title, handleTitleChange ] = useFormField('')
     const [ searchText, handleChange ] = useFormField()
+    const [ searchResults, setSearchResults ] = useState([])
 
     const setParty = (results) => {
         dispatch({type: 'SET_PARTY', party: results})
@@ -35,41 +37,61 @@ export default function Search() {
             .then(setParty)
     }
 
+    const getParty = () => {
+        fetch(`${BACKEND_URL}/parties/${loggedInUser.active_party}`)
+            .then(response => response.json())
+            .then(setParty)
+    }
+
+    const searchFriend = () => {
+        fetch(`${BACKEND_URL}/api/users?search=${searchText}`)
+            .then(response => response.json())
+            .then(setSearchResults)
+    }
+
+    const getUser = () => {
+        // fetch(`${BACKEND_URL}/users/${user.id}/`, {
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         'Accept': 'application/json'
+        //     }
+        // }).then(response => response.json())
+        //     .then(updateUserParty)
+    }
+
+    const updateUserParty = (user) => {
+        fetch(`${BACKEND_URL}/users/${user.id}/`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(user)
+        }).then(response => response.json())
+            .then(console.log)
+    }
+
     useEffect(() => {
         if (loggedInUser.active_party !== null) {
-            fetch(`${BACKEND_URL}/users/${loggedInUser.id}/`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(loggedInUser)
-            }).then(response => response.json())
-                .then(console.log)
+            updateUserParty(loggedInUser)
+        } else {
+            getParty()
         }
     },[loggedInUser])
 
-    const handleSubmit = () => {
-        
-        // const query = makeQuery({
-        //     location: searchText,
-        //     open_now: true
-        // })
-        
-        // fetch(`${yelpAPI}${query}`,{
-        //     headers: {
-        //         'Authorization': `Bearer ${YELP_API_TOKEN}`
-        //     }
-        // }).then(response => response.json())
-        //     .then(setRestaurantList)
-
-    }
+    useEffect(() => {
+        if (searchText == '') {
+            setSearchResults([])
+        } else {
+            searchFriend()
+        }
+    },[searchText])
 
     return (
         <View style={styles.body}>
             { loggedInUser.active_party === null
                 ? <>
-                    <Text style={styles.heading}>START A PARTY</Text>
+                    <Text style={styles.heading}>Start a PARTY</Text>
                     <View style={styles.form}>
                         <Input
                             label='PARTY NAME'
@@ -80,15 +102,18 @@ export default function Search() {
                         />
                         <Button buttonStyle={styles.button} titleStyle={styles.buttonText} title='CREATE' onPress={createParty} />
                     </View>
-                    <TextInput
-                        name='search'
-                        style={styles.search}
-                        placeholder='Enter name, email, or phone #'
-                        onChangeText={handleChange}
-                        value={searchText}
-                    />
-                    <Button buttonStyle={styles.button} titleStyle={styles.buttonText} title='FIND FRIEND' onPress={handleSubmit} />
-                </> : null }
+                </>
+                : <>
+                    <Text style={styles.heading}>WHO'S COMING? {activeParty.title}</Text>
+                        <TextInput
+                            name='search'
+                            style={styles.search}
+                            placeholder='Enter name, email, or phone #'
+                            onChangeText={handleChange}
+                            value={searchText}
+                        />
+                    { searchResults.length > 0 ? <UserResults users={searchResults} /> : searchText.length > 0 ? <Text>No Users Found</Text> : null }
+            </> }
         </View>
     )
 }

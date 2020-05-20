@@ -5,6 +5,7 @@ import Colors from '../styles/Colors'
 import Header from './components/Header'
 import RestaurantCard from './components/RestaurantCard'
 import Search from './components/Search'
+import Party from './components/Party'
 import getRandomInteger from '../helpers/getRandomInteger'
 
 export default function Main() {
@@ -19,6 +20,7 @@ export default function Main() {
   }
   
   const displaySection = {
+    'party': <Party />,
     'search': <Search />,
     'restaurant': <RestaurantCard />
   }

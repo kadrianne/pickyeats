@@ -1,4 +1,4 @@
-export default function mainPageReducer(state='search',action) {
+export default function mainPageReducer(state='party',action) {
     switch (action.type) {
         case 'NEW_ACCOUNT': 
             return 'new-account'

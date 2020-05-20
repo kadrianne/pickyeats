@@ -32,10 +32,7 @@ export default function UserResults({ users }) {
 
 const styles = StyleSheet.create({
     list: {
-        // backgroundColor: Colors.orange,
-        // marginBottom: 10,
         width: 300,
         maxHeight: 250,
-        // borderRadius: 100
     }
 })

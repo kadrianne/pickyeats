@@ -16,6 +16,18 @@ export default function Search() {
     const [ searchText, handleChange ] = useFormField()
     const [ searchResults, setSearchResults ] = useState([])
 
+    const updateUserParty = (partyID) => {
+        fetch(`${BACKEND_URL}/users/${loggedInUser.id}/`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({...loggedInUser, active_party: partyID})
+        }).then(response => response.json())
+            .then(console.log)
+    }
+
     const setParty = (results) => {
         dispatch({type: 'SET_PARTY', party: results})
     }
@@ -34,7 +46,10 @@ export default function Search() {
             },
             body: JSON.stringify(partyData)
         }).then(response => response.json())
-            .then(setParty)
+            .then(results => {
+                setParty(results)
+                updateUserParty(results.id)
+            })
     }
 
     const getParty = () => {
@@ -59,22 +74,8 @@ export default function Search() {
         //     .then(updateUserParty)
     }
 
-    const updateUserParty = (user) => {
-        fetch(`${BACKEND_URL}/users/${user.id}/`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(user)
-        }).then(response => response.json())
-            .then(console.log)
-    }
-
     useEffect(() => {
-        if (loggedInUser.active_party === null) {
-            updateUserParty(loggedInUser)
-        } else if (loggedInUser.active_party !== activeParty.id) {
+        if (loggedInUser.active_party !== null && !activeParty.id) {
             getParty()
         }
     },[loggedInUser])

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, Text, TextInput } from 'react-native'
+import { StyleSheet, ScrollView, View, Text, TextInput } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import useFormField from '../../hooks/useFormField'
 import { Input, Button } from 'react-native-elements'
@@ -72,9 +72,9 @@ export default function Search() {
     }
 
     useEffect(() => {
-        if (loggedInUser.active_party !== null) {
+        if (loggedInUser.active_party === null) {
             updateUserParty(loggedInUser)
-        } else {
+        } else if (loggedInUser.active_party !== activeParty.id) {
             getParty()
         }
     },[loggedInUser])
@@ -88,56 +88,87 @@ export default function Search() {
     },[searchText])
 
     return (
-        <View style={styles.body}>
+        <ScrollView contentContainerStyle={styles.body}>
+            <Text style={styles.heading}>START A PARTY</Text>
+            <View style={styles.form}>
             { loggedInUser.active_party === null
                 ? <>
-                    <Text style={styles.heading}>Start a PARTY</Text>
-                    <View style={styles.form}>
-                        <Input
-                            label='PARTY NAME'
-                            labelStyle={{color: Colors.burgundy}}
-                            inputContainerStyle={styles.field}
-                            value={title}
-                            onChangeText={handleTitleChange}
-                        />
-                        <Button buttonStyle={styles.button} titleStyle={styles.buttonText} title='CREATE' onPress={createParty} />
-                    </View>
+                    <Input
+                        label='PARTY NAME'
+                        labelStyle={{color: Colors.burgundy}}
+                        inputContainerStyle={styles.field}
+                        value={title}
+                        onChangeText={handleTitleChange}
+                    />
+                    <Button buttonStyle={styles.button} titleStyle={styles.buttonText} type='outline' title='CREATE' onPress={createParty} />
                 </>
                 : <>
-                    <Text style={styles.heading}>WHO'S COMING? {activeParty.title}</Text>
-                        <TextInput
-                            name='search'
-                            style={styles.search}
-                            placeholder='Enter name, email, or phone #'
-                            onChangeText={handleChange}
-                            value={searchText}
-                        />
+                    <Text style={styles.title}>{activeParty.title}</Text>
+                    <Text style={styles.subtext}>WHO'S INVITED?</Text>
+                    <TextInput
+                        name='search'
+                        style={styles.search}
+                        placeholder='Enter name, email, or phone #'
+                        onChangeText={handleChange}
+                        value={searchText}
+                    />
                     { searchResults.length > 0 ? <UserResults users={searchResults} /> : searchText.length > 0 ? <Text>No Users Found</Text> : null }
-            </> }
-        </View>
+                </>
+            }
+            </View>
+        </ScrollView>
     )
 }
 
 const styles = StyleSheet.create({
     form: {
         backgroundColor: Colors.orange,
-        padding: 30,
-        borderRadius: 10,
-        marginBottom: 30,
+        padding: 25,
+        borderRadius: 5,
+        width: 350,
+        marginBottom: 15,
+        alignItems: 'center',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.23,
+        shadowRadius: 2.62,
+        elevation: 4,
     },
     field: {
-        width: 250,
+        width: 280,
+        paddingHorizontal: 0,
         borderColor: Colors.darkOrange,
     },
     body: {
         alignItems: 'center',
     },
     heading: {
+        fontFamily: 'LondrinaShadow-Regular',
+        backgroundColor: Colors.burgundy,
+        textAlign: 'center',
+        fontSize: 56,
+        margin: 15,
+        width: 350,
+        borderRadius: 5,
+        color: Colors.white
+    },
+    title: {
+        fontFamily: 'LondrinaShadow-Regular',
+        textAlign: 'center',
+        fontSize: 48,
+        lineHeight: 48,
+        color: Colors.black,
+        marginBottom: 15
+    },
+    subtext: {
         fontFamily: 'Raleway-SemiBold',
         textAlign: 'center',
-        fontSize: 36,
-        margin: 50,
-        color: Colors.burgundy
+        fontSize: 26,
+        color: Colors.burgundy,
+        marginBottom: 15
     },
     search: {
         borderColor: Colors.burgundy,
@@ -151,12 +182,12 @@ const styles = StyleSheet.create({
         marginBottom: 20
     },    
     button: {
-        backgroundColor: Colors.burgundy,
-        marginVertical: 10,
-        marginHorizontal: 40
+        borderColor: Colors.burgundy,
+        borderWidth: 1,
+        marginHorizontal: 50,
     },
     buttonText: {
-        color: Colors.white,
+        color: Colors.burgundy,
         fontSize: 30,
         fontFamily: 'Pompiere-Regular'
     }

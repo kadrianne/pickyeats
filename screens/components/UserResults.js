@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, View, Text, TextInput } from 'react-native'
+import { StyleSheet, ScrollView, View } from 'react-native'
 import { ListItem } from 'react-native-elements'
 import Colors from '../../styles/Colors'
 
@@ -11,24 +11,31 @@ export default function UserResults({ users }) {
                 <ListItem
                     key={index}
                     title={user.name}
+                    subtitle={user.username}
+                    titleStyle={{fontFamily: 'Raleway-Medium'}}
                     // leftIcon={{ name: item.icon }}
+                    containerStyle={{borderRadius: 2}}
+                    rightIcon={{ name: 'add', color: Colors.burgundy}}
                     bottomDivider
-                    // chevron
                 />
             )
         })
     }
     return (
         <View style={styles.list}>
-            {listUsers()}
+            <ScrollView>
+                {listUsers()}
+            </ScrollView>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
     list: {
-        backgroundColor: Colors.orange,
-        padding: 30,
-        width: 400
+        // backgroundColor: Colors.orange,
+        // marginBottom: 10,
+        width: 300,
+        maxHeight: 250,
+        // borderRadius: 100
     }
 })

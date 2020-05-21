@@ -1,5 +1,3 @@
-import { users } from "react-native-auth0"
-
 export default function partyUsersReducer(state=[],action) {
     switch (action.type) {
         case 'ADD_USER': 

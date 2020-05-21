@@ -22,7 +22,6 @@ export default function UserResults({ users, resetSearch }) {
                     subtitle={user.username}
                     titleStyle={{fontFamily: 'Raleway-Medium'}}
                     containerStyle={{borderRadius: 2}}
-                    onPress={handlePress}
                     rightIcon={{ name: 'add', color: Colors.burgundy, onPress: () => handlePress(user) }}
                     bottomDivider
                 />

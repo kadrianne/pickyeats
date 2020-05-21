@@ -4,7 +4,7 @@ import { useSelector,useDispatch } from 'react-redux'
 import { ListItem, Button } from 'react-native-elements'
 import Colors from '../../styles/Colors'
 
-export default function PartyUsers({ updateUserParty }) {
+export default function PartyUsers() {
 
     const dispatch = useDispatch()
     const mainPage = useSelector(state => state.mainPage)
@@ -16,7 +16,6 @@ export default function PartyUsers({ updateUserParty }) {
     }
 
     const continueButton = () => {
-        partyUsers.forEach(user => updateUserParty(user,activeParty))
         dispatch({type: 'SEARCH'})
     }
 

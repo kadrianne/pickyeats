@@ -1,33 +1,17 @@
 import React from 'react'
 import { StyleSheet, View, Text, TextInput } from 'react-native'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import useFormField from '../../hooks/useFormField'
 import { Button } from 'react-native-elements'
 import makeQuery from '../../helpers/makeQuery'
 import Colors from '../../styles/Colors'
 import { BACKEND_URL } from '../../env.config'
-import { YELP_API_TOKEN } from '../../env.config'
 
-const yelpAPI = `https://api.yelp.com/v3/businesses/search?`
+export default function Search({ getRestaurantList, setRestaurantList, updateUserParty }) {
 
-export default function Search() {
-
-    const dispatch = useDispatch()
     const activeParty = useSelector(state => state.activeParty)
+    const partyUsers = useSelector(state => state.partyUsers)
     const [searchText, handleChange] = useFormField()
-
-    const setRestaurantList = (results) => {
-        dispatch({type:'SET_RESTAURANTS', restaurants: results.businesses})
-    }
-
-    const getRestaurantList = (query) => {
-        fetch(`${yelpAPI}${query}`,{
-            headers: {
-                'Authorization': `Bearer ${YELP_API_TOKEN}`
-            }
-        }).then(response => response.json())
-            .then(setRestaurantList)
-    }
 
     const postQueryToParty = (query) => {
         fetch(`${BACKEND_URL}/parties/${activeParty.id}/`, {
@@ -48,6 +32,7 @@ export default function Search() {
         })
         
         postQueryToParty(query)
+        partyUsers.forEach(user => updateUserParty(user,activeParty))
         getRestaurantList(query)
     }
 

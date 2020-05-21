@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, ScrollView, View, Text, TextInput } from 'react-native'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import useFormField from '../../hooks/useFormField'
 import { Input, Button } from 'react-native-elements'
 import Colors from '../../styles/Colors'
@@ -8,9 +8,8 @@ import UserResults from './UserResults'
 import PartyUsers from './PartyUsers'
 import { BACKEND_URL } from '../../env.config'
 
-export default function Search() {
+export default function Party({ updateUserParty, setParty }) {
 
-    const dispatch = useDispatch()
     const loggedInUser = useSelector(state => state.loggedInUser)
     const activeParty = useSelector(state => state.activeParty)
     const partyUsers = useSelector(state => state.partyUsers)
@@ -21,22 +20,6 @@ export default function Search() {
     const resetSearch = () => {
         setSearchText('')
         setSearchResults([])
-    }
-
-    const updateUserParty = (user, party) => {
-        fetch(`${BACKEND_URL}/users/${user.id}/`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({active_party: party.id})
-        }).then(response => response.json())
-            .then(console.log)
-    }
-
-    const setParty = (party) => {
-        dispatch({type: 'SET_PARTY', party: party})
     }
 
     const createParty = () => {
@@ -54,12 +37,6 @@ export default function Search() {
             })
     }
 
-    const getParty = () => {
-        fetch(`${BACKEND_URL}/parties/${loggedInUser.active_party}`)
-            .then(response => response.json())
-            .then(setParty)
-    }
-
     const searchFriend = () => {
         fetch(`${BACKEND_URL}/api/users?search=${searchText}`)
             .then(response => response.json())
@@ -75,12 +52,6 @@ export default function Search() {
         // }).then(response => response.json())
         //     .then(updateUserParty)
     }
-
-    useEffect(() => {
-        if (loggedInUser.active_party !== null && !activeParty.id) {
-            getParty()
-        }
-    },[loggedInUser])
 
     useEffect(() => {
         if (searchText == '') {
@@ -116,7 +87,7 @@ export default function Search() {
                         value={searchText}
                     />
                     { searchResults.length > 0 ? <UserResults users={searchResults} resetSearch={resetSearch} /> : searchText.length > 0 ? <Text>No Users Found</Text> : null }
-                    { partyUsers.length > 0 ? <PartyUsers updateUserParty={updateUserParty} /> : null }
+                    { partyUsers.length > 0 ? <PartyUsers /> : null }
                 </>
             }
             </View>

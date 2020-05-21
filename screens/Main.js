@@ -7,10 +7,16 @@ import RestaurantCard from './components/RestaurantCard'
 import Search from './components/Search'
 import Party from './components/Party'
 import getRandomInteger from '../helpers/getRandomInteger'
+import { BACKEND_URL } from '../env.config'
+import { YELP_API_TOKEN } from '../env.config'
+
+const yelpAPI = `https://api.yelp.com/v3/businesses/search?`
 
 export default function Main() {
 
   const dispatch = useDispatch()
+  const loggedInUser = useSelector(state => state.loggedInUser)
+  const activeParty = useSelector(state => state.activeParty)
   const restaurantList = useSelector(state => state.restaurantList)
   const mainPage = useSelector(state => state.mainPage)
 
@@ -18,10 +24,45 @@ export default function Main() {
     const objectPosition = getRandomInteger(0,restaurantList.length)
     dispatch({type:'SET_RESTAURANT', restaurant: restaurantList[objectPosition]})
   }
-  
+
+  const setRestaurantList = (results) => {
+    dispatch({type:'SET_RESTAURANTS', restaurants: results.businesses})
+  }
+
+  const getRestaurantList = (query) => {
+      fetch(`${yelpAPI}${query}`,{
+          headers: {
+              'Authorization': `Bearer ${YELP_API_TOKEN}`
+          }
+      }).then(response => response.json())
+          .then(setRestaurantList)
+  }
+
+  const updateUserParty = (user, party) => {
+    fetch(`${BACKEND_URL}/users/${user.id}/`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({active_party: party.id})
+    }).then(response => response.json())
+        .then(console.log)
+  }
+
+  const setParty = (party) => {
+    dispatch({type: 'SET_PARTY', party: party})
+  }
+
+  const getParty = () => {
+    fetch(`${BACKEND_URL}/parties/${loggedInUser.active_party}`)
+        .then(response => response.json())
+        .then(setParty)
+  }
+
   const displaySection = {
-    'party': <Party />,
-    'search': <Search />,
+    'new-party': <Party updateUserParty={updateUserParty} setParty={setParty} />,
+    'search': <Search getRestaurantList={getRestaurantList} setRestaurantList={setRestaurantList} updateUserParty={updateUserParty} />,
     'restaurant': <RestaurantCard />
   }
 
@@ -31,12 +72,28 @@ export default function Main() {
     }
   },[restaurantList])
 
-    return (
-        <SafeAreaView style={styles.body}>
-          <Header />
-          {displaySection[mainPage]}
-        </SafeAreaView>
-    )
+  useEffect(() => {
+    if (loggedInUser.active_party === null){
+      dispatch({type: 'NEW_PARTY'})
+    } else {
+        getParty()
+    }
+  },[])
+
+  useEffect(() => {
+    if (activeParty.active === true) {
+        getRestaurantList(activeParty.search_query)
+    } else {
+      dispatch({type: 'NEW_PARTY'})
+    }
+  },[activeParty])
+
+  return (
+      <SafeAreaView style={styles.body}>
+        <Header />
+        {displaySection[mainPage]}
+      </SafeAreaView>
+  )
 }
 
 const styles = StyleSheet.create({

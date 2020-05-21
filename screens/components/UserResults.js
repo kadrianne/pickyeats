@@ -1,9 +1,16 @@
 import React from 'react'
 import { StyleSheet, ScrollView, View } from 'react-native'
+import { useDispatch } from 'react-redux'
 import { ListItem } from 'react-native-elements'
 import Colors from '../../styles/Colors'
 
 export default function UserResults({ users }) {
+    
+    const dispatch = useDispatch()
+
+    const handlePress = (user) => {
+        dispatch({type:'ADD_USER', user: user})
+    }
 
     const listUsers = () => {
         return users.map((user,index) => {
@@ -13,9 +20,9 @@ export default function UserResults({ users }) {
                     title={user.name}
                     subtitle={user.username}
                     titleStyle={{fontFamily: 'Raleway-Medium'}}
-                    // leftIcon={{ name: item.icon }}
                     containerStyle={{borderRadius: 2}}
-                    rightIcon={{ name: 'add', color: Colors.burgundy}}
+                    onPress={handlePress}
+                    rightIcon={{ name: 'add', color: Colors.burgundy, onPress: () => handlePress(user) }}
                     bottomDivider
                 />
             )

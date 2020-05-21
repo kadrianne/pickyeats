@@ -5,6 +5,7 @@ import useFormField from '../../hooks/useFormField'
 import { Input, Button } from 'react-native-elements'
 import Colors from '../../styles/Colors'
 import UserResults from './UserResults'
+import PartyUsers from './PartyUsers'
 import { BACKEND_URL } from '../../env.config'
 
 export default function Search() {
@@ -12,29 +13,45 @@ export default function Search() {
     const dispatch = useDispatch()
     const loggedInUser = useSelector(state => state.loggedInUser)
     const activeParty = useSelector(state => state.activeParty)
+    const partyUsers = useSelector(state => state.partyUsers)
     const [ title, handleTitleChange ] = useFormField('')
-    const [ searchText, handleChange ] = useFormField()
+    const [ searchText, handleChange, setSearchText ] = useFormField()
     const [ searchResults, setSearchResults ] = useState([])
+
+    const resetSearch = () => {
+        setSearchText('')
+        setSearchResults([])
+    }
+
+    const updateUserParty = (user, party) => {
+        fetch(`${BACKEND_URL}/users/${user.id}/`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({...user, active_party: party.id})
+        }).then(response => response.json())
+            .then(console.log)
+    }
 
     const setParty = (results) => {
         dispatch({type: 'SET_PARTY', party: results})
     }
 
     const createParty = () => {
-        const partyData = {
-            title: title,
-            active: true
-        }
-
         fetch(`${BACKEND_URL}/parties/`, {
             method: 'POST',
             headers: {
                 'Content-type': 'application/json',
                 'Accept': 'application/json'
             },
-            body: JSON.stringify(partyData)
+            body: JSON.stringify({title})
         }).then(response => response.json())
-            .then(setParty)
+            .then(results => {
+                setParty(results)
+                updateUserParty(loggedInUser,results.id)
+            })
     }
 
     const getParty = () => {
@@ -59,22 +76,8 @@ export default function Search() {
         //     .then(updateUserParty)
     }
 
-    const updateUserParty = (user) => {
-        fetch(`${BACKEND_URL}/users/${user.id}/`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(user)
-        }).then(response => response.json())
-            .then(console.log)
-    }
-
     useEffect(() => {
-        if (loggedInUser.active_party === null) {
-            updateUserParty(loggedInUser)
-        } else if (loggedInUser.active_party !== activeParty.id) {
+        if (loggedInUser.active_party !== null && !activeParty.id) {
             getParty()
         }
     },[loggedInUser])
@@ -88,7 +91,7 @@ export default function Search() {
     },[searchText])
 
     return (
-        <ScrollView contentContainerStyle={styles.body}>
+        <ScrollView contentContainerStyle={styles.body} nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
             <Text style={styles.heading}>START A PARTY</Text>
             <View style={styles.form}>
             { loggedInUser.active_party === null
@@ -112,7 +115,8 @@ export default function Search() {
                         onChangeText={handleChange}
                         value={searchText}
                     />
-                    { searchResults.length > 0 ? <UserResults users={searchResults} /> : searchText.length > 0 ? <Text>No Users Found</Text> : null }
+                    { searchResults.length > 0 ? <UserResults users={searchResults} resetSearch={resetSearch} /> : searchText.length > 0 ? <Text>No Users Found</Text> : null }
+                    { partyUsers.length > 0 ? <PartyUsers updateUserParty={updateUserParty} /> : null }
                 </>
             }
             </View>

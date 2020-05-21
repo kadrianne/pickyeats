@@ -1,11 +1,11 @@
 import React from 'react'
 import { StyleSheet, View, Text, TextInput } from 'react-native'
-import { useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import useFormField from '../../hooks/useFormField'
 import { Button } from 'react-native-elements'
 import makeQuery from '../../helpers/makeQuery'
 import Colors from '../../styles/Colors'
-
+import { BACKEND_URL } from '../../env.config'
 import { YELP_API_TOKEN } from '../../env.config'
 
 const yelpAPI = `https://api.yelp.com/v3/businesses/search?`
@@ -13,31 +13,50 @@ const yelpAPI = `https://api.yelp.com/v3/businesses/search?`
 export default function Search() {
 
     const dispatch = useDispatch()
+    const activeParty = useSelector(state => state.activeParty)
     const [searchText, handleChange] = useFormField()
 
     const setRestaurantList = (results) => {
         dispatch({type:'SET_RESTAURANTS', restaurants: results.businesses})
     }
 
-    const handleSubmit = () => {
-        
-        const query = makeQuery({
-            location: searchText,
-            open_now: true
-        })
-        
+    const getRestaurantList = (query) => {
         fetch(`${yelpAPI}${query}`,{
             headers: {
                 'Authorization': `Bearer ${YELP_API_TOKEN}`
             }
         }).then(response => response.json())
             .then(setRestaurantList)
+    }
 
+    const postQueryToParty = (query) => {
+        fetch(`${BACKEND_URL}/parties/${activeParty.id}/`, {
+            method: 'PATCH',
+            headers: {
+                'Content-type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({active: true, search_query: query})
+        }).then(response => response.json())
+            .then(console.log)
+    }
+
+    const handleSubmit = () => { 
+        const query = makeQuery({
+            location: searchText,
+            open_now: true
+        })
+        
+        postQueryToParty(query)
+        getRestaurantList(query)
     }
 
     return (
-        <View style={styles.body}>
-            <Text style={styles.heading}>WHERE ARE WE LOOKING?</Text>
+        <>
+        <Text style={styles.heading}>START A PARTY</Text>
+        <View style={styles.form}>
+            <Text style={styles.title}>{activeParty.title}</Text>
+            <Text style={styles.subtext}>WHERE ARE WE LOOKING?</Text>
             <TextInput
                 name='search'
                 style={styles.search}
@@ -47,19 +66,51 @@ export default function Search() {
             />
             <Button buttonStyle={styles.button} titleStyle={styles.buttonText} title='FIND FOOD NOW' onPress={handleSubmit} />
         </View>
+        </>
     )
 }
 
 const styles = StyleSheet.create({
-    body: {
+    form: {
+        backgroundColor: Colors.orange,
+        padding: 25,
+        borderRadius: 5,
+        width: 350,
+        marginBottom: 15,
         alignItems: 'center',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.23,
+        shadowRadius: 2.62,
+        elevation: 4,
     },
     heading: {
+        fontFamily: 'LondrinaShadow-Regular',
+        backgroundColor: Colors.burgundy,
+        textAlign: 'center',
+        fontSize: 56,
+        margin: 15,
+        width: 350,
+        borderRadius: 5,
+        color: Colors.white
+    },
+    title: {
+        fontFamily: 'LondrinaShadow-Regular',
+        textAlign: 'center',
+        fontSize: 48,
+        lineHeight: 48,
+        color: Colors.black,
+        marginBottom: 15
+    },
+    subtext: {
         fontFamily: 'Raleway-SemiBold',
         textAlign: 'center',
-        fontSize: 36,
-        margin: 50,
-        color: Colors.burgundy
+        fontSize: 26,
+        color: Colors.burgundy,
+        marginBottom: 15
     },
     search: {
         borderColor: Colors.burgundy,

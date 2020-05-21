@@ -25,18 +25,18 @@ export default function Search() {
 
     const updateUserParty = (user, party) => {
         fetch(`${BACKEND_URL}/users/${user.id}/`, {
-            method: 'PUT',
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
-            body: JSON.stringify({...user, active_party: party.id})
+            body: JSON.stringify({active_party: party.id})
         }).then(response => response.json())
             .then(console.log)
     }
 
-    const setParty = (results) => {
-        dispatch({type: 'SET_PARTY', party: results})
+    const setParty = (party) => {
+        dispatch({type: 'SET_PARTY', party: party})
     }
 
     const createParty = () => {
@@ -48,9 +48,9 @@ export default function Search() {
             },
             body: JSON.stringify({title})
         }).then(response => response.json())
-            .then(results => {
-                setParty(results)
-                updateUserParty(loggedInUser,results.id)
+            .then(party => {
+                setParty(party)
+                updateUserParty(loggedInUser,party)
             })
     }
 

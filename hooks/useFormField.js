@@ -8,5 +8,5 @@ export default function useFormField() {
         setField(event)
     }
 
-    return [field,handleChange]
+    return [field, handleChange, setField]
 }

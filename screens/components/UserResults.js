@@ -4,12 +4,13 @@ import { useDispatch } from 'react-redux'
 import { ListItem } from 'react-native-elements'
 import Colors from '../../styles/Colors'
 
-export default function UserResults({ users }) {
+export default function UserResults({ users, resetSearch }) {
     
     const dispatch = useDispatch()
 
     const handlePress = (user) => {
         dispatch({type:'ADD_USER', user: user})
+        resetSearch()
     }
 
     const listUsers = () => {
@@ -30,7 +31,7 @@ export default function UserResults({ users }) {
     }
     return (
         <View style={styles.list}>
-            <ScrollView>
+            <ScrollView nestedScrollEnabled={true}>
                 {listUsers()}
             </ScrollView>
         </View>

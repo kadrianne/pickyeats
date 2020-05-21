@@ -15,17 +15,22 @@ export default function Search() {
     const activeParty = useSelector(state => state.activeParty)
     const partyUsers = useSelector(state => state.partyUsers)
     const [ title, handleTitleChange ] = useFormField('')
-    const [ searchText, handleChange ] = useFormField()
+    const [ searchText, handleChange, setSearchText ] = useFormField()
     const [ searchResults, setSearchResults ] = useState([])
 
-    const updateUserParty = (partyID) => {
-        fetch(`${BACKEND_URL}/users/${loggedInUser.id}/`, {
+    const resetSearch = () => {
+        setSearchText('')
+        setSearchResults([])
+    }
+
+    const updateUserParty = (user, party) => {
+        fetch(`${BACKEND_URL}/users/${user.id}/`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
-            body: JSON.stringify({...loggedInUser, active_party: partyID})
+            body: JSON.stringify({...user, active_party: party.id})
         }).then(response => response.json())
             .then(console.log)
     }
@@ -35,22 +40,17 @@ export default function Search() {
     }
 
     const createParty = () => {
-        const partyData = {
-            title: title,
-            active: true
-        }
-
         fetch(`${BACKEND_URL}/parties/`, {
             method: 'POST',
             headers: {
                 'Content-type': 'application/json',
                 'Accept': 'application/json'
             },
-            body: JSON.stringify(partyData)
+            body: JSON.stringify({title})
         }).then(response => response.json())
             .then(results => {
                 setParty(results)
-                updateUserParty(results.id)
+                updateUserParty(loggedInUser,results.id)
             })
     }
 
@@ -91,7 +91,7 @@ export default function Search() {
     },[searchText])
 
     return (
-        <ScrollView contentContainerStyle={styles.body}>
+        <ScrollView contentContainerStyle={styles.body} nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
             <Text style={styles.heading}>START A PARTY</Text>
             <View style={styles.form}>
             { loggedInUser.active_party === null
@@ -115,8 +115,8 @@ export default function Search() {
                         onChangeText={handleChange}
                         value={searchText}
                     />
-                    { searchResults.length > 0 ? <UserResults users={searchResults} /> : searchText.length > 0 ? <Text>No Users Found</Text> : null }
-                    { partyUsers.length > 0 ? <PartyUsers /> : null }
+                    { searchResults.length > 0 ? <UserResults users={searchResults} resetSearch={resetSearch} /> : searchText.length > 0 ? <Text>No Users Found</Text> : null }
+                    { partyUsers.length > 0 ? <PartyUsers updateUserParty={updateUserParty} /> : null }
                 </>
             }
             </View>

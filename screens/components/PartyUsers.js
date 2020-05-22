@@ -7,8 +7,6 @@ import Colors from '../../styles/Colors'
 export default function PartyUsers() {
 
     const dispatch = useDispatch()
-    const mainPage = useSelector(state => state.mainPage)
-    const activeParty = useSelector(state => state.activeParty)
     const partyUsers = useSelector(state => state.partyUsers)
 
     const handlePress = (user) => {
@@ -27,7 +25,6 @@ export default function PartyUsers() {
                     title={user.name}
                     subtitle={user.username}
                     titleStyle={{fontFamily: 'Raleway-Medium'}}
-                    // leftIcon={{ name: item.icon }}
                     containerStyle={{borderRadius: 2}}
                     rightIcon={{ name: 'remove', color: Colors.burgundy, onPress: () => handlePress(user) }}
                     bottomDivider

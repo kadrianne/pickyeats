@@ -15,7 +15,7 @@ export default function MyParty({ assignRestaurant }) {
         <View style={styles.body}>
             <Text style={styles.heading}>{activeParty.title}</Text>
             <Button buttonStyle={styles.button} titleStyle={styles.buttonText} title='VIEW RESTAURANTS' onPress={assignRestaurant} />
-            { matchedRestaurants.length > 0 ? <MatchedRestaurants /> : <Text style={styles.subtext}>No matches yet!</Text>}
+            { matchedRestaurants.length > 0 ? <MatchedRestaurants /> : <Text style={styles.subtext}>No matches yet!</Text> }
         </View>
         </>
     )
@@ -34,6 +34,8 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.23,
         shadowRadius: 2.62,
         elevation: 4,
+        width: 350,
+        alignItems: 'center',
     },
     field: {
         width: 280,

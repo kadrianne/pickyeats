@@ -43,16 +43,6 @@ export default function Party({ updateUserParty, setParty }) {
             .then(setSearchResults)
     }
 
-    const getUser = () => {
-        // fetch(`${BACKEND_URL}/users/${user.id}/`, {
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //         'Accept': 'application/json'
-        //     }
-        // }).then(response => response.json())
-        //     .then(updateUserParty)
-    }
-
     useEffect(() => {
         if (searchText == '') {
             setSearchResults([])

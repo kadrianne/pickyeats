@@ -6,6 +6,7 @@ import Header from './components/Header'
 import RestaurantCard from './components/RestaurantCard'
 import Search from './components/Search'
 import Party from './components/Party'
+import MyParty from './components/MyParty'
 import getRandomInteger from '../helpers/getRandomInteger'
 import { BACKEND_URL } from '../env.config'
 import { YELP_API_TOKEN } from '../env.config'
@@ -30,24 +31,24 @@ export default function Main() {
   }
 
   const getRestaurantList = (query) => {
-      fetch(`${yelpAPI}${query}`,{
-          headers: {
-              'Authorization': `Bearer ${YELP_API_TOKEN}`
-          }
-      }).then(response => response.json())
-          .then(setRestaurantList)
+    fetch(`${yelpAPI}${query}`,{
+      headers: {
+          'Authorization': `Bearer ${YELP_API_TOKEN}`
+      }
+    }).then(response => response.json())
+      .then(setRestaurantList)
   }
 
   const updateUserParty = (user, party) => {
     fetch(`${BACKEND_URL}/users/${user.id}/`, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({active_party: party.id})
+      method: 'PATCH',
+      headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+      },
+      body: JSON.stringify({active_party: party.id})
     }).then(response => response.json())
-        .then(console.log)
+      .then(console.log)
   }
 
   const setParty = (party) => {
@@ -56,14 +57,15 @@ export default function Main() {
 
   const getParty = () => {
     fetch(`${BACKEND_URL}/parties/${loggedInUser.active_party}`)
-        .then(response => response.json())
-        .then(setParty)
+      .then(response => response.json())
+      .then(setParty)
   }
 
   const displaySection = {
     'new-party': <Party updateUserParty={updateUserParty} setParty={setParty} />,
     'search': <Search getRestaurantList={getRestaurantList} setRestaurantList={setRestaurantList} updateUserParty={updateUserParty} />,
-    'restaurant': <RestaurantCard />
+    'restaurant': <RestaurantCard />,
+    'my-party': <MyParty assignRestaurant={assignRestaurant} />
   }
 
   useEffect(() => {
@@ -74,6 +76,7 @@ export default function Main() {
 
   useEffect(() => {
     if (loggedInUser.active_party === null){
+      console.log('first useEffect if')
       dispatch({type: 'NEW_PARTY'})
     } else {
         getParty()
@@ -81,10 +84,12 @@ export default function Main() {
   },[])
 
   useEffect(() => {
-    if (activeParty.active === true) {
+    if (activeParty.id) {
+      if (activeParty.active === true) {
         getRestaurantList(activeParty.search_query)
-    } else {
-      dispatch({type: 'NEW_PARTY'})
+      } else {
+        dispatch({type: 'NEW_PARTY'})
+      }
     }
   },[activeParty])
 
@@ -97,20 +102,20 @@ export default function Main() {
 }
 
 const styles = StyleSheet.create({
-    body: {
-      height: '100%',
-      alignItems: 'center',
-      backgroundColor: Colors.white,
-    },
-    button: {
-      margin: 10,
-    },
-    buttonText: {
-      color: Colors.white,
-      fontSize: 30,
-      fontFamily: 'Pompiere-Regular'
-    },
-    container: {
-      flexDirection: 'row'
-    }
-  })
+  body: {
+    height: '100%',
+    alignItems: 'center',
+    backgroundColor: Colors.white,
+  },
+  button: {
+    margin: 10,
+  },
+  buttonText: {
+    color: Colors.white,
+    fontSize: 30,
+    fontFamily: 'Pompiere-Regular'
+  },
+  container: {
+    flexDirection: 'row'
+  }
+})

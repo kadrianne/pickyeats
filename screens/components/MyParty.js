@@ -1,18 +1,21 @@
 import React from 'react'
 import { StyleSheet, View, Text } from 'react-native'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import Colors from '../../styles/Colors'
 import { Button } from 'react-native-elements'
+import MatchedRestaurants from './MatchedRestaurants'
 
 export default function MyParty({ assignRestaurant }) {
 
     const activeParty = useSelector(state => state.activeParty)
+    const matchedRestaurants = useSelector(state => state.matchedRestaurants)
 
     return (
         <>
         <View style={styles.body}>
             <Text style={styles.heading}>{activeParty.title}</Text>
             <Button buttonStyle={styles.button} titleStyle={styles.buttonText} title='VIEW RESTAURANTS' onPress={assignRestaurant} />
+            { matchedRestaurants.length > 0 ? <MatchedRestaurants /> : <Text style={styles.subtext}>No matches yet!</Text>}
         </View>
         </>
     )
@@ -22,7 +25,6 @@ const styles = StyleSheet.create({
     body: {
         backgroundColor: Colors.orange,
         margin: 10,
-        height: '75%',
         borderRadius: 5,
         shadowColor: "#000",
         shadowOffset: {
@@ -75,7 +77,8 @@ const styles = StyleSheet.create({
     },    
     button: {
         backgroundColor: Colors.burgundy,
-        marginHorizontal: 50
+        marginHorizontal: 50,
+        marginBottom: 25
     },
     buttonText: {
         color: Colors.white,

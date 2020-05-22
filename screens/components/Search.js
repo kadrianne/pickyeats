@@ -1,6 +1,6 @@
 import React from 'react'
 import { StyleSheet, View, Text, TextInput } from 'react-native'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import useFormField from '../../hooks/useFormField'
 import { Button } from 'react-native-elements'
 import makeQuery from '../../helpers/makeQuery'
@@ -9,7 +9,6 @@ import { BACKEND_URL } from '../../env.config'
 
 export default function Search({ getRestaurantList, setRestaurantList, updateUserParty }) {
 
-    const dispatch = useDispatch()
     const activeParty = useSelector(state => state.activeParty)
     const partyUsers = useSelector(state => state.partyUsers)
     const [searchText, handleChange] = useFormField()
@@ -34,7 +33,6 @@ export default function Search({ getRestaurantList, setRestaurantList, updateUse
         
         postQueryToParty(query)
         partyUsers.forEach(user => updateUserParty(user,activeParty))
-        dispatch({ type: 'ACTIVATE_PARTY' })
         getRestaurantList(query)
     }
 

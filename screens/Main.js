@@ -23,11 +23,11 @@ export default function Main() {
 
   const assignRestaurant = () => {
     const objectPosition = getRandomInteger(0,restaurantList.length)
-    dispatch({type:'SET_RESTAURANT', restaurant: restaurantList[objectPosition]})
+    dispatch({ type:'SET_RESTAURANT', restaurant: restaurantList[objectPosition] })
   }
 
   const setRestaurantList = (results) => {
-    dispatch({type:'SET_RESTAURANTS', restaurants: results.businesses})
+    dispatch({ type:'SET_RESTAURANTS', restaurants: results.businesses })
   }
 
   const getRestaurantList = (query) => {
@@ -52,13 +52,24 @@ export default function Main() {
   }
 
   const setParty = (party) => {
-    dispatch({type: 'SET_PARTY', party: party})
+    dispatch({ type: 'SET_PARTY', party })
   }
 
   const getParty = () => {
     fetch(`${BACKEND_URL}/parties/${loggedInUser.active_party}`)
       .then(response => response.json())
       .then(setParty)
+  }
+
+  const setMatchedRestaurants = (restaurants) => {
+    dispatch({ type: 'SET_MATCHES', restaurants })
+  }
+
+  const getMatchedRestaurants = () => {
+    fetch(`${BACKEND_URL}/api/matched-restaurants?party_id=${activeParty.id}`)
+      .then(response => response.json())
+      .then(setMatchedRestaurants)
+
   }
 
   const displaySection = {
@@ -76,8 +87,7 @@ export default function Main() {
 
   useEffect(() => {
     if (loggedInUser.active_party === null){
-      console.log('first useEffect if')
-      dispatch({type: 'NEW_PARTY'})
+      dispatch({ type: 'NEW_PARTY' })
     } else {
         getParty()
     }
@@ -87,8 +97,9 @@ export default function Main() {
     if (activeParty.id) {
       if (activeParty.active === true) {
         getRestaurantList(activeParty.search_query)
+        getMatchedRestaurants()
       } else {
-        dispatch({type: 'NEW_PARTY'})
+        dispatch({ type: 'NEW_PARTY' })
       }
     }
   },[activeParty])
@@ -96,7 +107,7 @@ export default function Main() {
   return (
       <SafeAreaView style={styles.body}>
         <Header />
-        {displaySection[mainPage]}
+        { displaySection[mainPage] }
       </SafeAreaView>
   )
 }

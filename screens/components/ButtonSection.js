@@ -10,17 +10,19 @@ export default function ButtonSection() {
     
     const dispatch = useDispatch()
     const currentRestaurant = useSelector(state => state.currentRestaurant)
+    const activeParty = useSelector(state => state.activeParty)
+    const loggedInUser = useSelector(state => state.loggedInUser)
 
     const removeRestaurantFromList = () => {
-        dispatch({type:'REMOVE_RESTAURANT', restaurant: currentRestaurant})
+        dispatch({ type:'REMOVE_RESTAURANT', restaurant: currentRestaurant })
     }
 
     const addRestaurantToLiked = () => {
         const likedRestaurant = {
             yelp_id: currentRestaurant.id,
             name: currentRestaurant.name,
-            party: 1,
-            user: 2
+            party: activeParty.id,
+            user: loggedInUser.id
         }
 
         fetch(`${BACKEND_URL}/liked-restaurants/`, {
@@ -32,10 +34,33 @@ export default function ButtonSection() {
             body: JSON.stringify(likedRestaurant)
         })
     }
+
+    const postMatchedRestaurant = (matchedRestaurant) => {
+        fetch(`${BACKEND_URL}/matched-restaurants/`, {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify(matchedRestaurant)
+        }).then(response => response.json())
+            .then(console.log)
+    }
       
+    const checkMatchedRestaurants = (likedRestaurants) => {
+        const matchedRestaurant = likedRestaurants.find(restaurant => restaurant.yelp_id == currentRestaurant.id)
+
+        if (matchedRestaurant) {
+            dispatch({type: 'ADD_MATCH', restaurant: matchedRestaurant})
+            postMatchedRestaurant(matchedRestaurant)
+        }
+    }
+
     const handleLike = () => {
-        removeRestaurantFromList()
-        addRestaurantToLiked()
+        fetch(`${BACKEND_URL}/api/party-restaurants?party_id=${activeParty.id}`)
+            .then(response => response.json())
+            .then(checkMatchedRestaurants)
+            .then(addRestaurantToLiked)
+            .then(removeRestaurantFromList)
     }
     
     const handleDislike = () => {

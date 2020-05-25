@@ -128,39 +128,5 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.white,
         width: 350,
         alignItems: 'center',
-    },
-    matchView: {
-        alignItems: 'center',
-        borderColor: Colors.orange,
-        borderRadius: 5,
-        borderWidth: 3,
-        width: '100%'
-    },
-    restaurantName: {
-        fontFamily: 'LondrinaShadow-Regular',
-        backgroundColor: Colors.orange,
-        textAlign: 'center',
-        fontSize: 48,
-        marginBottom: 10,
-        borderRadius: 5,
-        color: Colors.burgundy,
-        width: '100%'
-    },
-    matchText: {
-        color: Colors.primary,
-        fontFamily: 'LondrinaShadow-Regular',
-        fontSize: 56,
-        padding: 5,
-        textAlign: 'center',
-    },
-    partyButton: {
-        backgroundColor: Colors.burgundy,
-        marginHorizontal: 50,
-        marginVertical: 15
-    },
-    buttonText: {
-        color: Colors.white,
-        fontSize: 30,
-        fontFamily: 'Pompiere-Regular'
     }
 })

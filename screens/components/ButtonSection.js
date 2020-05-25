@@ -3,6 +3,7 @@ import { StyleSheet, View, Text } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import { Button, Overlay } from 'react-native-elements'
 import Colors from '../../styles/Colors'
+import Icon from 'react-native-vector-icons/FontAwesome'
 
 import { BACKEND_URL } from '../../env.config'
 
@@ -110,8 +111,9 @@ export default function ButtonSection() {
             <Overlay overlayStyle={styles.match} isVisible={visible} onBackdropPress={handleBackdropPress}>
                 <Text style={styles.restaurantName}>{currentRestaurant.name.toUpperCase()}</Text>
             <View style={styles.matchView}>
+                <Icon name='check-circle' size={60} color={Colors.primary} style={{marginTop: 15}} />
                 <Text style={styles.matchText}>IT'S A MATCH!</Text>
-                <Button buttonStyle={styles.partyButton} titleStyle={styles.buttonText} title='GO TO PARTY' onPress={handlePartyButton} />
+                <Button buttonStyle={styles.partyButton} titleStyle={styles.buttonText} title='VIEW IN MY PARTY' onPress={handlePartyButton} />
             </View>
             </Overlay>
         </View>
@@ -138,25 +140,25 @@ const styles = StyleSheet.create({
     },
     matchView: {
         alignItems: 'center',
-        backgroundColor: Colors.orange,
-        borderColor: Colors.burgundy,
+        borderColor: Colors.orange,
         borderRadius: 5,
         borderWidth: 3,
+        width: '100%'
     },
     restaurantName: {
         fontFamily: 'LondrinaShadow-Regular',
-        backgroundColor: Colors.burgundy,
+        backgroundColor: Colors.orange,
         textAlign: 'center',
         fontSize: 48,
         marginBottom: 10,
         borderRadius: 5,
-        color: Colors.white,
+        color: Colors.burgundy,
         width: '100%'
     },
     matchText: {
-        color: Colors.burgundy,
+        color: Colors.primary,
         fontFamily: 'LondrinaShadow-Regular',
-        fontSize: 72,
+        fontSize: 56,
         padding: 5,
         textAlign: 'center',
     },

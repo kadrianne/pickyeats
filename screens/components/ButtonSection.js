@@ -3,7 +3,7 @@ import { StyleSheet, View, Text } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import { Button, Overlay } from 'react-native-elements'
 import Colors from '../../styles/Colors'
-import Icon from 'react-native-vector-icons/FontAwesome'
+import MatchOverlay from './MatchOverlay'
 
 import { BACKEND_URL } from '../../env.config'
 
@@ -76,11 +76,6 @@ export default function ButtonSection() {
         removeRestaurantFromList()
     }
 
-    const handlePartyButton = () => {
-        dispatch({type: 'MY_PARTY'})
-        removeRestaurantFromList()
-    }
-
     const handleBackdropPress = () => {
         toggleOverlay()
         removeRestaurantFromList()
@@ -108,14 +103,10 @@ export default function ButtonSection() {
                 }}
                 onPress={handleLike}
             />
-            <Overlay overlayStyle={styles.match} isVisible={visible} onBackdropPress={handleBackdropPress}>
-                <Text style={styles.restaurantName}>{currentRestaurant.name.toUpperCase()}</Text>
-            <View style={styles.matchView}>
-                <Icon name='check-circle' size={60} color={Colors.primary} style={{marginTop: 15}} />
-                <Text style={styles.matchText}>IT'S A MATCH!</Text>
-                <Button buttonStyle={styles.partyButton} titleStyle={styles.buttonText} title='VIEW IN MY PARTY' onPress={handlePartyButton} />
-            </View>
-            </Overlay>
+            <Overlay children={<MatchOverlay removeRestaurantFromList={removeRestaurantFromList} />} 
+                overlayStyle={styles.match} 
+                isVisible={visible} 
+                onBackdropPress={handleBackdropPress} />
         </View>
     )
 }

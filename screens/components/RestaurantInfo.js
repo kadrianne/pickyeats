@@ -77,7 +77,7 @@ export default function RestaurantInfo(){
     return (
         <>
         <Text style={styles.title}>{restaurant.name}</Text>
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={showMoreInfo === false ? styles.cardInfo : null}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={ !showMoreInfo && styles.cardInfo }>
             <View style={styles.infoView}>
                 <View style={styles.ratingView}>
                     <Text style={styles.rating}>{restaurant.rating.toFixed(1)}</Text><Icon name='star' size={22} color="#990000" />
@@ -94,7 +94,7 @@ export default function RestaurantInfo(){
                     : <><Text style={styles.text}>{`${restaurant.location.display_address[0]}, ${restaurant.location.display_address[1]}`}</Text>
                     <Text style={styles.text}>{restaurant.location.display_address[2]}</Text></>
                 }
-                { showMoreInfo === false ? null : <Text style={styles.text}>{restaurant.display_phone}</Text> }
+                { showMoreInfo && <Text style={styles.text}>{restaurant.display_phone}</Text> }
             </View>
             { showMoreInfo === false 
             ? <Button
@@ -135,8 +135,8 @@ const styles = StyleSheet.create({
         marginTop: 5,
         height: '100%',
         justifyContent: 'space-between',
-        position: 'relative',
-        zIndex: 2
+        // position: 'relative',
+        // zIndex: 2
     },
     title: {
         fontFamily: 'LondrinaShadow-Regular',

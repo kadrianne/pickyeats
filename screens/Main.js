@@ -80,7 +80,7 @@ export default function Main() {
   }
 
   useEffect(() => {
-    if (restaurantList.length !== 0) {
+    if (restaurantList.length !== 0 && mainPage !== 'my-party') {
       assignRestaurant()
     }
   },[restaurantList])
@@ -117,16 +117,5 @@ const styles = StyleSheet.create({
     height: '100%',
     alignItems: 'center',
     backgroundColor: Colors.white,
-  },
-  button: {
-    margin: 10,
-  },
-  buttonText: {
-    color: Colors.white,
-    fontSize: 30,
-    fontFamily: 'Pompiere-Regular'
-  },
-  container: {
-    flexDirection: 'row'
   }
 })

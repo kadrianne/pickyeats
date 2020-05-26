@@ -28,10 +28,10 @@ export default function RestaurantCard() {
         if (restaurant.price){
             const priceArray = restaurant.price.split('')
             
-            return priceArray.map(dollar => {
-                return <Icon name='dollar' size={20} color="#990000" />
+            return priceArray.map((dollar,index) => {
+                return <Icon key={index} name='dollar' size={20} color="#990000" />
             })
-        }
+        }r
     }
 
     const setMoreInfo = (results) => {

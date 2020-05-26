@@ -17,10 +17,10 @@ export default function RestaurantCard() {
     const restaurant = useSelector(state => state.currentRestaurant)
     const moreInfo = useSelector(state => state.moreRestaurantInfo)
     const showMoreInfo = useSelector(state => state.showMoreInfo)
-    const [visible, setVisible] = useState(false)
+    const [overlayVisible, setOverlayVisible] = useState(false)
     const [label, setLabel] = useState('')
 
-    const position = new Animated.ValueXY()
+    let position = new Animated.ValueXY()
 
     const rotate = position.x.interpolate({
         inputRange: [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
@@ -45,7 +45,7 @@ export default function RestaurantCard() {
     })
 
     const toggleOverlay = () => {
-        setVisible(!visible)
+        setOverlayVisible(!overlayVisible)
     }
 
     const removeRestaurantFromList = () => {
@@ -104,15 +104,17 @@ export default function RestaurantCard() {
 
     const handleLike = () => {
         setLabel('like')
-        fetch(`${BACKEND_URL}/api/party-restaurants?party_id=${activeParty.id}`)
-            .then(response => response.json())
-            .then(checkMatchedRestaurants)
-            .then(addRestaurantToLiked)
+        setTimeout(() => {
+            fetch(`${BACKEND_URL}/api/party-restaurants?party_id=${activeParty.id}`)
+                .then(response => response.json())
+                .then(checkMatchedRestaurants)
+                .then(addRestaurantToLiked)
+        }, 300)
     }
     
     const handleDislike = () => {
         setLabel('dislike')
-        removeRestaurantFromList()
+        setTimeout(removeRestaurantFromList, 300)
     }
 
     const panResponder = PanResponder.create({
@@ -123,19 +125,22 @@ export default function RestaurantCard() {
         onPanResponderRelease: (event, gestureState) => {
             if(gestureState.dx > 120) {
                 Animated.spring(position, {
-                    toValue: { x: SCREEN_WIDTH + 100, y: gestureState.dy }
+                    toValue: { x: SCREEN_WIDTH + 100, y: gestureState.dy },
+                    useNativeDriver: true,
                 }).start(handleLike,() => {
                     position.setValue({ x: 0, y: 0 })
                 })
             } else if(gestureState.dx < -120) {
                 Animated.spring(position, {
-                    toValue: { x: -SCREEN_WIDTH - 100, y: gestureState.dy }
+                    toValue: { x: -SCREEN_WIDTH - 100, y: gestureState.dy },
+                    useNativeDriver: true,
                 }).start(handleDislike,() => {
                     position.setValue({ x: 0, y: 0 })
                 })
             } else {
                 Animated.spring(position, {
                     toValue: { x: 0, y: 0 },
+                    useNativeDriver: true,
                     friction: 4
                 }).start()
             }
@@ -156,8 +161,8 @@ export default function RestaurantCard() {
         { showMoreInfo === false
             ? <>
             <Animated.View {...panResponder.panHandlers} style={[rotateAndTranslate, styles.card]}>
-                <OverlayLabels label='YUM' color={Colors.primary} rotation='-30deg' top={25} left={15} opacity={likeOpacity} />
-                <OverlayLabels label='MEH' color={Colors.secondary} rotation='30deg' top={25} right={15} opacity={dislikeOpacity} />
+                {/* <OverlayLabels label='YUM' color={Colors.primary} rotation='-30deg' top={25} left={15} opacity={likeOpacity} />
+                <OverlayLabels label='MEH' color={Colors.secondary} rotation='30deg' top={25} right={15} opacity={dislikeOpacity} /> */}
                 <Image
                 source={{uri: `${restaurant.image_url}`}} 
                 style={styles.image}
@@ -169,7 +174,7 @@ export default function RestaurantCard() {
                 handleDislike={handleDislike}
                 removeRestaurantFromList={removeRestaurantFromList}
                 toggleOverlay={toggleOverlay}
-                visible={visible}
+                visible={overlayVisible}
             />
             { label === 'like' && displayLike() }
             { label === 'dislike' && displayDislike() }

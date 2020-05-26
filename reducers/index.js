@@ -9,6 +9,7 @@ import moreRestaurantInfo from './MoreRestaurantInfoReducer'
 import activeParty from './ActivePartyReducer'
 import partyUsers from './PartyUsersReducer'
 import matchedRestaurants from './MatchedRestaurantsReducer'
+import showMoreInfo from './ShowMoreInfoReducer'
 
 export default combineReducers({
     navigation,
@@ -20,5 +21,6 @@ export default combineReducers({
     moreRestaurantInfo,
     activeParty,
     partyUsers,
-    matchedRestaurants
+    matchedRestaurants,
+    showMoreInfo
 })

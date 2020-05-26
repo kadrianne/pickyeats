@@ -1,149 +1,191 @@
-import React, { useState } from 'react'
-import { StyleSheet, ScrollView, View, Text, Image } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { StyleSheet, View, Image, Animated, PanResponder } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
-import { Button } from 'react-native-elements'
 import Colors from '../../styles/Colors'
-import Icon from 'react-native-vector-icons/FontAwesome'
 import ButtonSection from './ButtonSection'
-import Review from './Review'
+import OverlayLabels from './OverlayLabels'
+import { SCREEN_WIDTH } from '../../styles/Dimensions'
 import { SliderBox } from 'react-native-image-slider-box'
-import { YELP_API_TOKEN } from '../../env.config'
+import RestaurantInfo from './RestaurantInfo'
+import { BACKEND_URL } from '../../env.config'
 
 export default function RestaurantCard() {
 
     const dispatch = useDispatch()
+    const activeParty = useSelector(state => state.activeParty)
+    const loggedInUser = useSelector(state => state.loggedInUser)
     const restaurant = useSelector(state => state.currentRestaurant)
     const moreInfo = useSelector(state => state.moreRestaurantInfo)
-    const reviews = useSelector(state => state.reviews)
-    const [ showMoreInfo, setShowMoreInfo ] = useState(false)
+    const showMoreInfo = useSelector(state => state.showMoreInfo)
+    const [overlayVisible, setOverlayVisible] = useState(false)
+    const [label, setLabel] = useState('')
 
-    const renderCategories = () => {
-        const categories = restaurant.categories.map(category => {
-            return category.title
-        })
-        return categories.join(', ')
+    let position = new Animated.ValueXY()
+
+    const rotate = position.x.interpolate({
+        inputRange: [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
+        outputRange: ['-10deg', '0deg', '10deg'],
+        extrapolate: 'clamp'
+    })
+
+    const rotateAndTranslate = {
+        transform: [{ rotate }, ...position.getTranslateTransform()]
     }
 
-    const renderPrice = () => {
-        if (restaurant.price){
-            const priceArray = restaurant.price.split('')
-            
-            return priceArray.map((dollar,index) => {
-                return <Icon key={index} name='dollar' size={20} color="#990000" />
-            })
-        }r
+    const likeOpacity = position.x.interpolate({
+        inputRange: [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
+        outputRange: [0,0,1],
+        extrapolate: 'clamp'
+    })
+
+    const dislikeOpacity = position.x.interpolate({
+        inputRange: [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
+        outputRange: [1,0,0],
+        extrapolate: 'clamp'
+    })
+
+    const toggleOverlay = () => {
+        setOverlayVisible(!overlayVisible)
     }
 
-    const setMoreInfo = (results) => {
-        dispatch({type: 'SET_INFO', info: results})
+    const removeRestaurantFromList = () => {
+        dispatch({ type:'REMOVE_RESTAURANT', restaurant: restaurant })
     }
 
-    const getMoreInfo = () => {
-        fetch(`https://api.yelp.com/v3/businesses/${restaurant.id}`, {
+    const addRestaurantToLiked = () => {
+        const likedRestaurant = {
+            yelp_id: restaurant.id,
+            name: restaurant.name,
+            party: activeParty.id,
+            user: loggedInUser.id
+        }
+
+        fetch(`${BACKEND_URL}/liked-restaurants/`, {
+            method: 'POST',
             headers: {
-                'Authorization': `Bearer ${YELP_API_TOKEN}`
-            }
+                'Content-type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(likedRestaurant)
         })
-            .then(response => response.json())
-            .then(setMoreInfo)
     }
 
-    const setReviews = (reviews) => {
-        dispatch({type:'SET_REVIEWS', reviews: reviews})
-    }
-
-    const getReviews = () => {
-        fetch(`https://api.yelp.com/v3/businesses/${restaurant.id}/reviews`, {
+    const postMatchedRestaurant = (matchedRestaurant) => {
+        fetch(`${BACKEND_URL}/matched-restaurants/`, {
+            method: 'POST',
             headers: {
-                'Authorization': `Bearer ${YELP_API_TOKEN}`
-            }
-        })
-            .then(response => response.json())
-            .then(results => setReviews(results.reviews))
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify(matchedRestaurant)
+        }).then(response => response.json())
+            .then(console.log)
+    }
+      
+    const checkMatchedRestaurants = (likedRestaurants) => {
+        const matchedRestaurant = likedRestaurants.find(currentRestaurant => currentRestaurant.yelp_id == restaurant.id)
+
+        if (matchedRestaurant) {
+            dispatch({type: 'ADD_MATCH', restaurant: matchedRestaurant})
+            postMatchedRestaurant(matchedRestaurant)
+            toggleOverlay()
+        } else {
+            removeRestaurantFromList()
+        }
+
     }
 
-    const handleViewMore = () => {
-        getMoreInfo()
-        getReviews()
-       setShowMoreInfo(previousState => !previousState)
+    const displayLike = () => {
+        return <OverlayLabels label='YUM' color={Colors.primary} rotation='-30deg' top={100} left={15} />
     }
+
+    const displayDislike = () => {
+        return <OverlayLabels label='MEH' color={Colors.secondary} rotation='30deg' top={100} right={15} />
+    }
+
+    const handleLike = () => {
+        setLabel('like')
+        setTimeout(() => {
+            fetch(`${BACKEND_URL}/api/party-restaurants?party_id=${activeParty.id}`)
+                .then(response => response.json())
+                .then(checkMatchedRestaurants)
+                .then(addRestaurantToLiked)
+        }, 300)
+    }
+    
+    const handleDislike = () => {
+        setLabel('dislike')
+        setTimeout(removeRestaurantFromList, 300)
+    }
+
+    const panResponder = PanResponder.create({
+        onStartShouldSetPanResponder: (event, gestureState) => true,
+        onPanResponderMove: (event,gestureState) => {
+            position.setValue({ x: gestureState.dx, y: gestureState.dy })
+        },
+        onPanResponderRelease: (event, gestureState) => {
+            if(gestureState.dx > 120) {
+                Animated.spring(position, {
+                    toValue: { x: SCREEN_WIDTH + 100, y: gestureState.dy },
+                    useNativeDriver: true,
+                }).start(handleLike,() => {
+                    position.setValue({ x: 0, y: 0 })
+                })
+            } else if(gestureState.dx < -120) {
+                Animated.spring(position, {
+                    toValue: { x: -SCREEN_WIDTH - 100, y: gestureState.dy },
+                    useNativeDriver: true,
+                }).start(handleDislike,() => {
+                    position.setValue({ x: 0, y: 0 })
+                })
+            } else {
+                Animated.spring(position, {
+                    toValue: { x: 0, y: 0 },
+                    useNativeDriver: true,
+                    friction: 4
+                }).start()
+            }
+        }
+    })
 
     const getHours = () => {
         // hours = restaurantInfo.hours
         // console.log(restaurantInfo.hours)
     }
 
-    const displayReviews = () => {
-        return reviews.map(review => {
-            return <Review review={review} />
-        })
-    }
+    useEffect(() => {
+        setLabel('')
+    },[restaurant])
 
     return (
         <>
-        <View style={ showMoreInfo === false ? styles.card : styles.cardExpanded }>
-            { showMoreInfo === false
-                ? <Image
+        { showMoreInfo === false
+            ? <>
+            <Animated.View {...panResponder.panHandlers} style={[rotateAndTranslate, styles.card]}>
+                {/* <OverlayLabels label='YUM' color={Colors.primary} rotation='-30deg' top={25} left={15} opacity={likeOpacity} />
+                <OverlayLabels label='MEH' color={Colors.secondary} rotation='30deg' top={25} right={15} opacity={dislikeOpacity} /> */}
+                <Image
                 source={{uri: `${restaurant.image_url}`}} 
                 style={styles.image}
                 />
-                // : null
-                : <View style={{position: 'relative', zIndex: 1, height: '30%'}}>
-                    {moreInfo.photos ? <SliderBox imageComponentStyle={styles.image} images={moreInfo.photos} /> : null}
+                <RestaurantInfo />
+            </Animated.View>
+            <ButtonSection 
+                handleLike={handleLike}
+                handleDislike={handleDislike}
+                removeRestaurantFromList={removeRestaurantFromList}
+                toggleOverlay={toggleOverlay}
+                visible={overlayVisible}
+            />
+            { label === 'like' && displayLike() }
+            { label === 'dislike' && displayDislike() }
+            </>
+            : <View style={styles.cardExpanded}>
+                <View style={{position: 'relative', zIndex: 1, height: '30%'}}>
+                    {moreInfo.photos && <SliderBox imageComponentStyle={styles.image} images={moreInfo.photos} />}
                 </View>
-            }
-            <Text style={styles.title}>{restaurant.name}</Text>
-            <ScrollView contentContainerStyle={showMoreInfo === false ? styles.cardInfo : null}>
-                <View style={styles.infoView}>
-                    <View style={styles.ratingView}>
-                        <Text style={styles.rating}>{restaurant.rating.toFixed(1)}</Text><Icon name='star' size={22} color="#990000" />
-                    </View>
-                    <View style={styles.priceView}>
-                        {renderPrice()}
-                    </View>
-                </View>
-                <Text style={styles.boldText}>{renderCategories()}</Text>
-                <View style={styles.address}>
-                    {restaurant.location.display_address.length <= 2
-                        ? <><Text style={styles.text}>{restaurant.location.display_address[0]}</Text>
-                        <Text style={styles.text}>{restaurant.location.display_address[1]}</Text></>
-                        : <><Text style={styles.text}>{`${restaurant.location.display_address[0]}, ${restaurant.location.display_address[1]}`}</Text>
-                        <Text style={styles.text}>{restaurant.location.display_address[2]}</Text></>
-                    }
-                    { showMoreInfo === false ? null : <Text style={styles.text}>{restaurant.display_phone}</Text> }
-                </View>
-                { showMoreInfo === false 
-                ? <Button
-                    buttonStyle={styles.button} titleStyle={styles.buttonText} type='outline'
-                    icon={{
-                        name: 'arrow-downward',
-                        size: 30,
-                        color: Colors.burgundy
-                    }}
-                    iconRight
-                    title='VIEW MORE'
-                    onPress={handleViewMore}
-                    /> 
-                : <>
-                    {/* <Text style={styles.openText}>OPEN NOW</Text> */}
-                    <Text style={styles.boldText}>Reviews ({restaurant.review_count})</Text>
-                    {displayReviews()}
-                    {/* <Text >{restaurantInfo.hours}</Text> */}
-                    <Button
-                        buttonStyle={styles.button} titleStyle={styles.buttonText} type='outline'
-                        icon={{
-                            name: 'arrow-upward',
-                            size: 30,
-                            color: Colors.burgundy
-                        }}
-                        iconRight
-                        title='SHOW LESS'
-                        onPress={handleViewMore}
-                    /> 
-                </> }
-            </ScrollView>
-        </View>
-        { showMoreInfo === false ? <ButtonSection /> : null }
+                <RestaurantInfo />
+            </View>
+        }
         </>
     )
 }
@@ -151,7 +193,7 @@ export default function RestaurantCard() {
 const styles = StyleSheet.create({
     card: {
         backgroundColor: Colors.orange,
-        margin: 10,
+        marginHorizontal: 10,
         height: '75%',
         borderRadius: 5,
         shadowColor: "#000",
@@ -162,6 +204,8 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.23,
         shadowRadius: 2.62,
         elevation: 4,
+        position: 'absolute',
+        top: 70
     },
     cardExpanded: {
         backgroundColor: Colors.orange,
@@ -169,81 +213,10 @@ const styles = StyleSheet.create({
         width: '100%',
         justifyContent: 'space-between'
     },
-    cardInfo: {
-        marginTop: 5,
-        height: '100%',
-        justifyContent: 'space-between',
-        position: 'relative',
-        zIndex: 2
-    },
     image: {
-        width: '100%',
+        width: SCREEN_WIDTH - 30,
         aspectRatio: 5/3,
         borderRadius: 5,
         margin: 5,
-        position: 'relative',
-        zIndex: 1
     },
-    title: {
-        fontFamily: 'LondrinaShadow-Regular',
-        fontSize: 42,
-        textAlign: 'center',
-        marginHorizontal: 15,
-        marginBottom: 5,
-        lineHeight: 45
-    },
-    text: {
-        fontFamily: 'Raleway-Light',
-        fontSize: 16,
-        textAlign: 'center',
-    },
-    infoView:{
-        flexDirection: 'row',
-        marginHorizontal: 15,
-        marginVertical: 10
-    },
-    ratingView: {
-        flexDirection: 'row',
-        flex: 1,
-        justifyContent: 'flex-start'
-    },
-    rating: {
-        fontFamily: 'Raleway-SemiBold',
-        fontSize: 17,
-        color: Colors.burgundy,
-        textAlign: 'center',
-        paddingRight: 5,
-    },
-    openText: {
-        fontFamily: 'Raleway-SemiBold',
-        fontSize: 20,
-        color: Colors.burgundy,
-    },
-    boldText: {
-        fontFamily: 'Raleway-SemiBold',
-        fontSize: 18,
-        color: Colors.burgundy,
-        marginHorizontal: 15,
-        textAlign: 'center',
-        marginVertical: 10
-    },
-    priceView: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'flex-end'
-    },
-    address: {
-        marginVertical: 10
-    },
-    button: {
-        borderColor: Colors.burgundy,
-        borderWidth: 1,
-        marginHorizontal: 15,
-        marginBottom: 15
-    },
-    buttonText: {
-        color: Colors.burgundy,
-        fontSize: 24,
-        fontFamily: 'Pompiere-Regular'
-    }
 })

@@ -7,7 +7,7 @@ import makeQuery from '../../helpers/makeQuery'
 import Colors from '../../styles/Colors'
 import { BACKEND_URL } from '../../env.config'
 
-export default function Search({ getRestaurantList, setRestaurantList, updateUserParty }) {
+export default function Search({ updateUserParty }) {
 
     const dispatch = useDispatch()
     const activeParty = useSelector(state => state.activeParty)
@@ -31,11 +31,10 @@ export default function Search({ getRestaurantList, setRestaurantList, updateUse
             location: searchText,
             open_now: true
         })
-        
+
         postQueryToParty(query)
         partyUsers.forEach(user => updateUserParty(user,activeParty))
-        dispatch({ type: 'ACTIVATE_PARTY' })
-        getRestaurantList(query)
+        dispatch({ type: 'ACTIVATE_PARTY', query })
     }
 
     return (

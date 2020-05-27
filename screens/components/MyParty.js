@@ -2,19 +2,42 @@ import React from 'react'
 import { StyleSheet, View, Text } from 'react-native'
 import { useSelector } from 'react-redux'
 import Colors from '../../styles/Colors'
-import { Button } from 'react-native-elements'
+import { Button, Avatar, Tooltip } from 'react-native-elements'
 import MatchedRestaurants from './MatchedRestaurants'
+import { BACKEND_URL } from '../../env.config'
 
 export default function MyParty({ assignRestaurant }) {
 
     const activeParty = useSelector(state => state.activeParty)
+    const partyUsers = useSelector(state => state.partyUsers)
     const matchedRestaurants = useSelector(state => state.matchedRestaurants)
+
+    const displayUserAvatars = () => {
+        return partyUsers.map((user,index) => {
+            const splitName = user.name.split(' ')
+            const initials = splitName.map(name => name[0]).join('')
+
+                return (
+                    <Avatar
+                        key={index}
+                        size="medium"
+                        rounded
+                        title={initials}
+                        activeOpacity={0.7}
+                        containerStyle={styles.avatar}
+                        titleStyle={{color: Colors.darkOrange}}
+                    />
+            )
+        })
+    }
 
     return (
         <>
         <View style={styles.body}>
             <Text style={styles.heading}>{activeParty.title}</Text>
-            <Button buttonStyle={styles.button} titleStyle={styles.buttonText} title='BACK TO RESTAURANTS' onPress={assignRestaurant} />
+            <Text style={styles.subtext}>In This Party:</Text>
+            <View style={styles.avatarList}>{displayUserAvatars()}</View>
+            <Button buttonStyle={styles.button} titleStyle={styles.buttonText} title='VIEW RESTAURANTS' onPress={assignRestaurant} />
             { matchedRestaurants.length > 0 ? <MatchedRestaurants /> : <Text style={styles.subtext}>No matches yet!</Text> }
         </View>
         </>
@@ -86,5 +109,15 @@ const styles = StyleSheet.create({
         color: Colors.white,
         fontSize: 30,
         fontFamily: 'Pompiere-Regular'
+    },
+    avatarList: {
+        flexDirection: 'row',
+        marginBottom: 10
+    },
+    avatar: {
+        backgroundColor: Colors.white,
+        borderColor: Colors.orange,
+        borderWidth: 1,
+        marginHorizontal: -3,
     }
 })

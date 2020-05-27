@@ -61,6 +61,16 @@ export default function Main() {
       .then(setParty)
   }
 
+  const setPartyUsers = (users) => {
+    dispatch({ type: 'SET_USERS', users })
+  }
+
+  const getPartyUsers = () => {
+    fetch(`${BACKEND_URL}/parties/${activeParty.id}`)
+      .then(response => response.json())
+      .then(party => setPartyUsers(party.users))
+  }
+
   const setMatchedRestaurants = (restaurants) => {
     dispatch({ type: 'SET_MATCHES', restaurants })
   }
@@ -98,6 +108,7 @@ export default function Main() {
       if (activeParty.active === true) {
         getRestaurantList(activeParty.search_query)
         getMatchedRestaurants()
+        getPartyUsers()
       } else {
         dispatch({ type: 'NEW_PARTY' })
       }

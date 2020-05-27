@@ -4,6 +4,8 @@ export default function partyUsersReducer(state=[],action) {
             return addUser(state, action)
         case 'REMOVE_USER':
             return state.filter(user => user !== action.user)
+        case 'SET_USERS':
+            return action.users
         default: 
             return state
     }

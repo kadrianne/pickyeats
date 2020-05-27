@@ -9,7 +9,7 @@ import { SliderBox } from 'react-native-image-slider-box'
 import RestaurantInfo from './RestaurantInfo'
 import { BACKEND_URL } from '../../env.config'
 
-export default function RestaurantCard() {
+export default function RestaurantCard({ getMatchedRestaurants }) {
 
     const dispatch = useDispatch()
     const activeParty = useSelector(state => state.activeParty)
@@ -52,12 +52,13 @@ export default function RestaurantCard() {
         dispatch({ type:'REMOVE_RESTAURANT', restaurant: restaurant })
     }
 
-    const addRestaurantToLiked = () => {
+    const addRestaurantToLiked = (matchedRestaurantID) => {
         const likedRestaurant = {
             yelp_id: restaurant.id,
             name: restaurant.name,
             party: activeParty.id,
-            user: loggedInUser.id
+            user: loggedInUser.id,
+            matched_restaurant: matchedRestaurantID
         }
 
         fetch(`${BACKEND_URL}/liked-restaurants/`, {
@@ -70,6 +71,17 @@ export default function RestaurantCard() {
         })
     }
 
+
+    const updatePreviouslyLikedRestaurant = (previouslyLikedRestaurant, matchedRestaurantID) => {
+        fetch(`${BACKEND_URL}/liked-restaurants/${previouslyLikedRestaurant.id}/`, {
+            method: 'PATCH',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify({matched_restaurant: matchedRestaurantID})
+        })
+    }
+
     const postMatchedRestaurant = (matchedRestaurant) => {
         fetch(`${BACKEND_URL}/matched-restaurants/`, {
             method: 'POST',
@@ -78,17 +90,21 @@ export default function RestaurantCard() {
             },
             body: JSON.stringify(matchedRestaurant)
         }).then(response => response.json())
-            .then(console.log)
+            .then(results => {
+                addRestaurantToLiked(results.id)
+                updatePreviouslyLikedRestaurant(matchedRestaurant,results.id)
+                getMatchedRestaurants()
+            })
     }
       
     const checkMatchedRestaurants = (likedRestaurants) => {
         const matchedRestaurant = likedRestaurants.find(currentRestaurant => currentRestaurant.yelp_id == restaurant.id)
 
         if (matchedRestaurant) {
-            dispatch({type: 'ADD_MATCH', restaurant: matchedRestaurant})
             postMatchedRestaurant(matchedRestaurant)
             toggleOverlay()
         } else {
+            addRestaurantToLiked(null)
             removeRestaurantFromList()
         }
 
@@ -108,7 +124,6 @@ export default function RestaurantCard() {
             fetch(`${BACKEND_URL}/api/party-restaurants?party_id=${activeParty.id}`)
                 .then(response => response.json())
                 .then(checkMatchedRestaurants)
-                .then(addRestaurantToLiked)
         }, 300)
     }
     

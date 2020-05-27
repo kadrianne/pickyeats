@@ -2,7 +2,7 @@ import React from 'react'
 import { StyleSheet, View, Text } from 'react-native'
 import { useSelector } from 'react-redux'
 import Colors from '../../styles/Colors'
-import { ListItem } from 'react-native-elements'
+import { ListItem, Avatar } from 'react-native-elements'
 
 export default function MatchedRestaurants() {
 
@@ -10,6 +10,22 @@ export default function MatchedRestaurants() {
 
     const listMatches = () => {
         return matchedRestaurants.map((restaurant,index) => {
+            const userAvatars = () => restaurant.liked_restaurants.map((like,index) => {
+                const splitName = like.user.name.split(' ')
+                const initials = splitName.map(name => name[0]).join('')
+                
+                return (
+                    <Avatar
+                        key={index}
+                        size="small"
+                        rounded
+                        title={initials}
+                        activeOpacity={0.7}
+                        containerStyle={styles.avatar}
+                        titleStyle={{color: Colors.white}}
+                    />
+                )}
+            )
             return (
                 <ListItem
                     key={index}
@@ -17,6 +33,7 @@ export default function MatchedRestaurants() {
                     titleStyle={{fontFamily: 'Raleway-Medium'}}
                     containerStyle={{borderRadius: 2}}
                     bottomDivider
+                    rightAvatar={<>{userAvatars()}</>}
                 />
             )
         })
@@ -41,5 +58,11 @@ const styles = StyleSheet.create({
         fontSize: 26,
         color: Colors.burgundy,
         marginVertical: 15
-    },  
+    },
+    avatar: {
+        backgroundColor: Colors.orange,
+        borderWidth: 1,
+        borderColor: Colors.white,
+        marginHorizontal: -2
+    }
 })

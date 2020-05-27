@@ -78,13 +78,12 @@ export default function Main() {
     fetch(`${BACKEND_URL}/api/matched-restaurants?party_id=${activeParty.id}`)
       .then(response => response.json())
       .then(setMatchedRestaurants)
-
   }
 
   const displaySection = {
     'new-party': <Party updateUserParty={updateUserParty} setParty={setParty} />,
     'search': <Search getRestaurantList={getRestaurantList} setRestaurantList={setRestaurantList} updateUserParty={updateUserParty} />,
-    'restaurant': <RestaurantCard />,
+    'restaurant': <RestaurantCard getMatchedRestaurants={getMatchedRestaurants} />,
     'my-party': <MyParty assignRestaurant={assignRestaurant} />
   }
 

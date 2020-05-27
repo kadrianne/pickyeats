@@ -70,6 +70,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 56,
         margin: 15,
+        paddingHorizontal: 10,
         width: 350,
         borderRadius: 5,
         color: Colors.burgundy

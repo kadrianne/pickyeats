@@ -24,15 +24,19 @@ On login/signup, users are directed to the 'Start a Party' by:
 
 When these steps are completed, the party is marked as active, and others users will be able to view their party on login.
 
-![start-a-party](https://res.cloudinary.com/kristine-and-samuel/image/upload/v1590700322/PICKYeats/party.gif)
+![start-a-party](https://res.cloudinary.com/kristine-and-samuel/image/upload/v1590701050/PICKYeats/party.gif)
 
 ### Like/Dislike and View Restaurant Details
 
 When a user is in an active party, they are directed to a restaurant card based on the location paramaters. A restaurant card displays an image and some information on load with like and dislike buttons for the user to make a decision. There is also an option to View More with additional images and information like reviews. 
 
+![restaurants](https://res.cloudinary.com/kristine-and-samuel/image/upload/v1590701185/PICKYeats/restaurants.gif)
+
 ### Matching a Place & My Party screen
 
 When a user likes a place that another user in the party has previously liked, a match notification will display for the user. The user can then view their party matches on the 'My Party' screen. An badge indicator will also display on the party icon in the upper-left with the number of matched places.
+
+![party-matches](https://res.cloudinary.com/kristine-and-samuel/image/upload/v1590701291/PICKYeats/match.gif)
 
 ## Challenges
 

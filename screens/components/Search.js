@@ -22,8 +22,7 @@ export default function Search({ updateUserParty }) {
                 'Accept': 'application/json'
             },
             body: JSON.stringify({active: true, search_query: query})
-        }).then(response => response.json())
-            .then(console.log)
+        })
     }
 
     const handleSubmit = () => { 

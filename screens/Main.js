@@ -33,7 +33,7 @@ export default function Main() {
   const getRestaurantList = (query) => {
     fetch(`${yelpAPI}${query}`,{
       headers: {
-          'Authorization': `Bearer ${YELP_API_TOKEN}`
+        'Authorization': `Bearer ${YELP_API_TOKEN}`
       }
     }).then(response => response.json())
       .then(setRestaurantList)
@@ -43,8 +43,8 @@ export default function Main() {
     fetch(`${BACKEND_URL}/users/${user.id}/`, {
       method: 'PATCH',
       headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
       },
       body: JSON.stringify({active_party: party.id})
     })
@@ -97,7 +97,7 @@ export default function Main() {
     if (loggedInUser.active_party === null){
       dispatch({ type: 'NEW_PARTY' })
     } else {
-        getParty()
+      getParty()
     }
   },[])
 

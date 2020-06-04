@@ -19,16 +19,16 @@ export default function MyParty({ assignRestaurant }) {
             const splitName = user.name.split(' ')
             const initials = splitName.map(name => name[0]).join('')
 
-                return (
-                    <Avatar
-                        key={index}
-                        size="medium"
-                        rounded
-                        title={initials}
-                        activeOpacity={0.7}
-                        containerStyle={styles.avatar}
-                        titleStyle={{color: Colors.darkOrange}}
-                    />
+            return (
+                <Avatar
+                    key={index}
+                    size="medium"
+                    rounded
+                    title={initials}
+                    activeOpacity={0.7}
+                    containerStyle={styles.avatar}
+                    titleStyle={{color: Colors.darkOrange}}
+                />
             )
         })
     }
@@ -60,12 +60,12 @@ export default function MyParty({ assignRestaurant }) {
                 'Accept': 'application/json'
             },
             body: JSON.stringify({active: false})
-        }).then(dispatch({type: 'END_PARTY'}))
+        }).then(dispatch({ type: 'END_PARTY' }))
     }
 
     const endParty = () => {
         deactivateParty()
-        dispatch({type: 'NEW_PARTY'})
+        dispatch({ type: 'NEW_PARTY' })
         endPartyForUsers()
     }
 

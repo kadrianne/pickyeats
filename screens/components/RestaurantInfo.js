@@ -47,8 +47,7 @@ export default function RestaurantInfo(){
             headers: {
                 'Authorization': `Bearer ${YELP_API_TOKEN}`
             }
-        })
-            .then(response => response.json())
+        }).then(response => response.json())
             .then(setMoreInfo)
     }
 
@@ -61,8 +60,7 @@ export default function RestaurantInfo(){
             headers: {
                 'Authorization': `Bearer ${YELP_API_TOKEN}`
             }
-        })
-            .then(response => response.json())
+        }).then(response => response.json())
             .then(results => setReviews(results.reviews))
     }
 
@@ -71,7 +69,7 @@ export default function RestaurantInfo(){
             getMoreInfo()
             getReviews()
         }
-        dispatch({type: 'TOGGLE_INFO'})
+        dispatch({ type: 'TOGGLE_INFO' })
     }
 
     return (
@@ -135,8 +133,6 @@ const styles = StyleSheet.create({
         marginTop: 5,
         height: '100%',
         justifyContent: 'space-between',
-        // position: 'relative',
-        // zIndex: 2
     },
     title: {
         fontFamily: 'LondrinaShadow-Regular',

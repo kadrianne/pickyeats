@@ -33,8 +33,8 @@ export default function MyParty({ assignRestaurant }) {
         })
     }
 
-    const removeActiveParty = () => {
-        fetch(`${BACKEND_URL}/users/${loggedInUser.id}/`, {
+    const removeActiveParty = (userID) => {
+        fetch(`${BACKEND_URL}/users/${userID}/`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -44,9 +44,18 @@ export default function MyParty({ assignRestaurant }) {
         })
     }
 
+    const endPartyForUsers = () => {
+        removeActiveParty(loggedInUser.id)
+
+        partyUsers.forEach(user => {
+            removeActiveParty(user.id)
+        })
+    }
+
     const endParty = () => {
+        dispatch({type: 'END_PARTY'})
         dispatch({type: 'NEW_PARTY'})
-        removeActiveParty()
+        endPartyForUsers()
     }
 
     return (

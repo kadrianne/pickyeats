@@ -4,7 +4,7 @@ export default function matchedRestaurantsReducer(state=[],action) {
             return [...state, action.restaurant]
         case 'SET_MATCHES':
             return action.restaurants
-        case 'NEW_PARTY':
+        case 'END_PARTY':
             return []
         default: 
             return state

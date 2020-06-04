@@ -4,7 +4,7 @@ export default function activePartyReducer(state={},action) {
             return action.party
         case 'ACTIVATE_PARTY':
             return {...state, active: true, search_query: action.query}
-        case 'NEW_PARTY':
+        case 'END_PARTY':
             return {}
         default: 
             return state

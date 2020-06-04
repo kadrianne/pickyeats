@@ -6,6 +6,8 @@ export default function partyUsersReducer(state=[],action) {
             return state.filter(user => user !== action.user)
         case 'SET_USERS':
             return action.users
+        case 'END_PARTY':
+            return []
         default: 
             return state
     }

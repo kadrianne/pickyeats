@@ -22,8 +22,7 @@ export default function Search({ updateUserParty }) {
                 'Accept': 'application/json'
             },
             body: JSON.stringify({active: true, search_query: query})
-        }).then(response => response.json())
-            .then(console.log)
+        }).then(dispatch({ type: 'ACTIVATE_PARTY', query }))
     }
 
     const handleSubmit = () => { 
@@ -32,9 +31,8 @@ export default function Search({ updateUserParty }) {
             open_now: true
         })
 
-        postQueryToParty(query)
         partyUsers.forEach(user => updateUserParty(user,activeParty))
-        dispatch({ type: 'ACTIVATE_PARTY', query })
+        postQueryToParty(query)
     }
 
     return (

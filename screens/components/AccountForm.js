@@ -122,4 +122,4 @@ const styles = StyleSheet.create({
         fontSize: 26,
         fontFamily: 'Pompiere-Regular'
     }
-  })
+})

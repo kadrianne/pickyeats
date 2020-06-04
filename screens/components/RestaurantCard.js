@@ -95,7 +95,7 @@ export default function RestaurantCard({ getMatchedRestaurants }) {
                 updatePreviouslyLikedRestaurant(matchedRestaurant,results.id)
             })
     }
-      
+
     const checkMatchedRestaurants = (likedRestaurants) => {
         const matchedRestaurant = likedRestaurants.find(currentRestaurant => currentRestaurant.yelp_id == restaurant.id)
 
@@ -106,7 +106,6 @@ export default function RestaurantCard({ getMatchedRestaurants }) {
             addRestaurantToLiked(null)
             setTimeout(removeRestaurantFromList, 300)
         }
-
     }
 
     const displayLike = () => {

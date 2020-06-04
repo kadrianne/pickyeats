@@ -52,8 +52,19 @@ export default function MyParty({ assignRestaurant }) {
         })
     }
 
+    const deactivateParty = () => {
+        fetch(`${BACKEND_URL}/parties/${activeParty.id}/`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({active: false})
+        }).then(dispatch({type: 'END_PARTY'}))
+    }
+
     const endParty = () => {
-        dispatch({type: 'END_PARTY'})
+        deactivateParty()
         dispatch({type: 'NEW_PARTY'})
         endPartyForUsers()
     }

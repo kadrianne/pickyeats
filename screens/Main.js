@@ -47,7 +47,7 @@ export default function Main() {
           'Accept': 'application/json'
       },
       body: JSON.stringify({active_party: party.id})
-    }).then(response => response.json())
+    })
   }
 
   const setParty = (party) => {

@@ -1,13 +1,15 @@
 import React from 'react'
 import { StyleSheet, View, Text } from 'react-native'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import Colors from '../../styles/Colors'
-import { Button, Avatar, Tooltip } from 'react-native-elements'
+import { Button, Avatar } from 'react-native-elements'
 import MatchedRestaurants from './MatchedRestaurants'
 import { BACKEND_URL } from '../../env.config'
 
 export default function MyParty({ assignRestaurant }) {
 
+    const dispatch = useDispatch()
+    const loggedInUser = useSelector(state => state.loggedInUser)
     const activeParty = useSelector(state => state.activeParty)
     const partyUsers = useSelector(state => state.partyUsers)
     const matchedRestaurants = useSelector(state => state.matchedRestaurants)
@@ -31,6 +33,22 @@ export default function MyParty({ assignRestaurant }) {
         })
     }
 
+    const removeActiveParty = () => {
+        fetch(`${BACKEND_URL}/users/${loggedInUser.id}/`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({active_party: null})
+        })
+    }
+
+    const endParty = () => {
+        dispatch({type: 'NEW_PARTY'})
+        removeActiveParty()
+    }
+
     return (
         <>
         <View style={styles.body}>
@@ -39,6 +57,7 @@ export default function MyParty({ assignRestaurant }) {
             <View style={styles.avatarList}>{displayUserAvatars()}</View>
             <Button buttonStyle={styles.button} titleStyle={styles.buttonText} title='VIEW RESTAURANTS' onPress={assignRestaurant} />
             { matchedRestaurants.length > 0 ? <MatchedRestaurants /> : <Text style={styles.subtext}>No matches yet!</Text> }
+            <Button buttonStyle={styles.endButton} titleStyle={{color: Colors.burgundy, ...styles.buttonText}} type='outline' title='END PARTY' onPress={endParty} />
         </View>
         </>
     )
@@ -106,8 +125,13 @@ const styles = StyleSheet.create({
         marginHorizontal: 25,
         marginBottom: 25
     },
+    endButton: {
+        borderColor: Colors.burgundy,
+        borderWidth: 1,
+        marginHorizontal: 25,
+        marginBottom: 25
+    },
     buttonText: {
-        color: Colors.white,
         fontSize: 30,
         fontFamily: 'Pompiere-Regular'
     },

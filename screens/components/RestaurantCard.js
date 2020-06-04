@@ -79,7 +79,7 @@ export default function RestaurantCard({ getMatchedRestaurants }) {
                 'Content-type': 'application/json'
             },
             body: JSON.stringify({matched_restaurant: matchedRestaurantID})
-        })
+        }).then(getMatchedRestaurants)
     }
 
     const postMatchedRestaurant = (matchedRestaurant) => {
@@ -93,7 +93,6 @@ export default function RestaurantCard({ getMatchedRestaurants }) {
             .then(results => {
                 addRestaurantToLiked(results.id)
                 updatePreviouslyLikedRestaurant(matchedRestaurant,results.id)
-                getMatchedRestaurants()
             })
     }
       
@@ -105,7 +104,7 @@ export default function RestaurantCard({ getMatchedRestaurants }) {
             toggleOverlay()
         } else {
             addRestaurantToLiked(null)
-            removeRestaurantFromList()
+            setTimeout(removeRestaurantFromList, 300)
         }
 
     }
@@ -120,11 +119,9 @@ export default function RestaurantCard({ getMatchedRestaurants }) {
 
     const handleLike = () => {
         setLabel('like')
-        setTimeout(() => {
-            fetch(`${BACKEND_URL}/api/party-restaurants?party_id=${activeParty.id}`)
-                .then(response => response.json())
-                .then(checkMatchedRestaurants)
-        }, 300)
+        fetch(`${BACKEND_URL}/api/party-restaurants?party_id=${activeParty.id}`)
+            .then(response => response.json())
+            .then(checkMatchedRestaurants)
     }
     
     const handleDislike = () => {

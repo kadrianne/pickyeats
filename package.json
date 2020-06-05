@@ -34,5 +34,8 @@
   },
   "jest": {
     "preset": "react-native"
+  },
+  "engines": {
+    "yarn": "YARN NO LONGER USED - use npm instead."
   }
 }

@@ -3,7 +3,7 @@
 PICKYeats is a mobile app allowing people to connect with friends and cycle through a batch of restaurants in their area to decide on a place to eat or order from. Inspired by Tinder, this app aims to provide a quick and delightful user experience so that users don't have to spend much time using it. 
 
 Backend respository: https://github.com/kadrianne/pickyeats-backend
-
+[Demo Video](https://www.loom.com/share/ca778dcf803442459ef00976ef3411bc)
 
 ## Built With
 Frontend: JavaScript, React Native v0.62.2, Redux, [React Native Elements](https://react-native-elements.github.io/)<br>

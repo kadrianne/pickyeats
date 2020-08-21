@@ -11,7 +11,7 @@ Backend: Python 3.8.2, Django v3.0.6, Django Rest Framework v3.11.0, PostgreSQL 
 
 API for business data: [Yelp Fusion](https://www.yelp.com/fusion)
 
-The app is currently only build for and tested with an Android device (Pixel 3 XL) using an Android Studio emulator.
+The app is currently only built for and tested with an Android device (Pixel 3 XL) using an Android Studio emulator.
 
 ## App Features
 
